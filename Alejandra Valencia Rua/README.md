@@ -20,7 +20,7 @@ Con el fin de fundamentar la propuesta, se realizaron reuniones con profesores d
 
 A partir de estas entrevistas, se identificaron las siguientes herramientas actualmente utilizadas en procesos de coevaluación:
 
-### ![http://feedbackfruits.com/rubrics/evaluate-contributions-to-teamwork](https://img.shields.io/badge/FeedbackFruits--purple)
+### [![FeedbackFruits](https://img.shields.io/badge/FeedbackFruits--purple)](http://feedbackfruits.com/rubrics/evaluate-contributions-to-teamwork)
 
 FeedbackFruits es una plataforma integrada comúnmente en sistemas LMS que permite implementar dinámicas de retroalimentación entre pares.
 
@@ -35,10 +35,8 @@ FeedbackFruits es una plataforma integrada comúnmente en sistemas LMS que permi
 - Configuración avanzada puede resultar compleja.
 - Visualización de métricas no siempre personalizada por curso o actividad.
 
-<br>
 
-
-### ![](https://img.shields.io/badge/Google%20Forms%20/%20Microsoft%20Forms--purple)
+### [![Google / Microsoft Forms](https://img.shields.io/badge/Google%20Forms%20/%20Microsoft%20Forms--purple)]()
 
 Según los docentes consultados, una de las prácticas más frecuentes es la creación de formularios personalizados con escalas estimativas (por ejemplo, de 1 a 5) para que los estudiantes evalúen a sus compañeros.
 
@@ -58,9 +56,7 @@ Según los docentes consultados, una de las prácticas más frecuentes es la cre
 
 Además de las herramientas mencionadas por los docentes consultados, se realizó una revisión exploratoria de soluciones implementadas en contextos universitarios a nivel internacional. Esta búsqueda permitió identificar plataformas especializadas en la evaluación del trabajo en equipo que cuentan con respaldo académico y uso documentado en instituciones de educación superior. A continuación, se presentan dos referentes adicionales relevantes para el análisis comparativo de la propuesta.
 
-<br>
-
-### ![https://info.catme.org/features/peer-evaluation/](https://img.shields.io/badge/CATME--purple)
+### [![CATME](https://img.shields.io/badge/CATME--purple)](https://info.catme.org/features/peer-evaluation/)
 
 CATME (Comprehensive Assessment for Team-Member Effectiveness) es una herramienta ampliamente utilizada en educación superior para evaluar la efectividad de los miembros en equipos de trabajo, desorrallad por por un equipo de investigadores, destacando Matthew W. Ohland, Misty L. Loughry, y Richard A. Layton, con apoyo de la National Science Foundation (NSF) y la Universidad de Purdue[^1].
 
@@ -75,9 +71,8 @@ CATME (Comprehensive Assessment for Team-Member Effectiveness) es una herramient
 - No siempre integrada a flujos académicos internos.
 - Interfaz menos intuitiva para uso móvil continuo.
 
-<br>
 
-### ![https://www.youtube.com/watch?v=witnwTevtAk](https://img.shields.io/badge/Moodle%20Workshop%20Module--purple)
+### [![Moodle](https://img.shields.io/badge/Moodle%20Workshop%20Module--purple)](https://youtu.be/witnwTevtAk?si=b094PRJXUPdGb_52)
 
 El módulo Workshop de Moodle permite implementar procesos de evaluación entre pares dentro del entorno LMS.
 
@@ -106,7 +101,7 @@ A partir del análisis de estas herramientas y de las entrevistas con docentes, 
 <br>
 
 ## 3. Composición y diseño de la solución
-Se propone el desarrollo de una aplicación móvil nativa multiplataforma construida en Flutter, que integre en una sola solución los roles de docente y estudiante mediante un sistema de autenticación con diferenciación de vistas según perfil.
+Se propone el desarrollo de una aplicación móvil nativa multiplataforma construida en Flutter, que integre en **una sola solución** los roles de docente y estudiante mediante un sistema de autenticación con diferenciación de vistas según perfil.
 
 A diferencia de modelos que separan aplicaciones por rol o dependen exclusivamente de entornos LMS, esta propuesta centraliza la gestión académica en una única aplicación, garantizando coherencia de experiencia de usuario, mantenimiento simplificado y futura escalabilidad.
 
@@ -148,7 +143,10 @@ La solución se estructura bajo principios de **Clean Architecture**, organizand
 ## 4. Flujo Funcional
 La aplicación implementa un flujo basado en roles (Teacher / Student). Tras iniciar sesión con correo institucional y contraseña, el sistema valida credenciales y consulta en Roble el perfil asociado (rol). Según el rol, dirige al usuario a su interfaz correspondiente.
 
+<br>
+
 ### 4.1. Autenticación
+---
 1. El usuario ingresa a la app y visualiza **Login**.
 2. Ingresa **correo institucional** + **contraseña**.
 3. El sistema autentica con Roble.
@@ -157,7 +155,10 @@ La aplicación implementa un flujo basado en roles (Teacher / Student). Tras ini
    - Si es **Student** → se carga **Student Home**.
 5. La sesión se mantiene activa hasta que el usuario haga **Log out**.
 
+<br>
+
 ### 4.2. Flujo: Rol Teacher
+---
 
 **4.2.1 Navegación principal (Teacher)**
 
@@ -166,7 +167,8 @@ NavBar inferior:
 - Cursos
 - Perfil
 
-*Acción global:* **Botón (+)** (crear curso o crear assessment según la pantalla).
+*Acción global:* **Botón (+)** para crear curso o crear assessment según la pantalla.
+
 
 
 **4.2.2 Teacher Home (inicio)**
@@ -174,34 +176,24 @@ Al entrar:
 - Se muestran todos los **cursos recientes** creados por el docente.
 - Se muestran **indicadores globales** de los cursos del docente.
 
-**Gráficas recomendadas (útiles y alineadas al objetivo):**
-1. **Radar por criterios (promedio global)**: Punctuality, Contributions, Commitment, Attitude.
-2. **Barras: promedio por curso** (para comparar desempeño promedio entre cursos).
-3. **Línea temporal: promedio por actividad** (muestra evolución del rendimiento de los grupos).
-
-Acción:
-- Botón flotante **(+) Crear curso**.
+*Acción:* Botón **(+) Crear curso**.
 
 
 **4.2.3 Crear curso**
 Al presionar (+):
 - Se abre un **popup** con:
   - **Nombre del curso** (obligatorio)
-  - **Importar CSV** de categorías/grupos (opcional) *(representa importación desde Brightspace)*
+  - **Importar CSV** de categorías de los grupos (opcional) *(representa importación desde Brightspace)*
   - Botones: ✅ **Crear** | ✖️ **Cancelar**
 
 Al confirmar **Crear**:
 1. Se guarda el curso en Roble.
 2. El sistema genera un **Course Code** único (verificación privada).
 3. Si se importó CSV, se registran:
-   - Group Categories
-   - Groups
-   - Members por group (si vienen en el archivo)
+   - Group Categories, y sus respectivos grupos
+   - Members por group
 
-Luego:
-- Se navega a la **vista del curso**.
-
-
+Luego, se traslada a la **vista del curso**.
 
 **4.2.4 Vista de Curso**
 Encabezado:
@@ -211,14 +203,12 @@ Encabezado:
 
 Contenido:
 - Lista de **Group Categories** importadas (o estado “sin categorías importadas”).
-- Lista de **Assessments** creados (si ya existen).
 
-Acción:
-- Botón flotante **(+) Crear Assessment**.
+*Acción:* Botón **(+) Crear Assessment**.
 
 
 
-**4.2.5 Crear Assessment / Activit**
+**4.2.5 Crear Assessment / Activity**
 Al presionar (+):
 - Se abre popup con:
   - **Name**
@@ -226,7 +216,7 @@ Al presionar (+):
   - **Visibility**
     - **Public**: resultados visibles a miembros del grupo (criterios + score general)
     - **Private**: resultados visibles solo para el docente
-  - ✅ **Crear** | ✖️ **Cancelar**
+  - ✅ **Crear**   | ✖️ **Cancelar**
 
 Reglas:
 - Assessment queda asociado a una **Group Category** (para saber qué equipos participan).
@@ -234,7 +224,7 @@ Reglas:
 - Se habilita evaluación entre pares **sin self-evaluation**.
 
 Al crear:
-- Se agrega el assessment al listado del curso.
+- Se agrega el assessment a las actividades del Group Category.
 
 
 
@@ -249,7 +239,6 @@ Al entrar a un grupo:
 - Se muestra tabla/lista con cada integrante:
   - Promedio por criterio
   - **Score general ponderado**
-- Opcional: distribución (min/max/promedio) para detectar outliers.
 
 
 
@@ -267,9 +256,10 @@ Pantalla “Cursos” muestra:
 
 <br>
 
-## 4.3 Flujo: Rol Student
+### 4.3 Flujo: Rol Student
+---
 
-### 4.3.1 Navegación principal (Student)
+**4.3.1 Navegación principal (Student)**
 NavBar inferior:
 - **Home**
 - **Cursos**
@@ -278,24 +268,15 @@ NavBar inferior:
 Acción global:
 - Botón flotante **(+) Unirse a curso** (por código).
 
----
-
-### 4.3.2 Student Home (inicio)
+**4.3.2 Student Home (inicio)**
 Al entrar:
 - Cursos recientes
 - Indicadores globales del estudiante
 
-**Gráficas recomendadas (útiles):**
-1. **Radar personal por criterios** (promedio acumulado).
-2. **Línea de progreso** (score general a través del tiempo/actividades).
-3. **Tarjeta de pendientes**: número de evaluaciones activas no completadas.
-
 Acción:
 - Botón flotante **(+) Unirse a curso**.
 
----
-
-### 4.3.3 Unirse a curso (Student)
+**4.3.3 Unirse a curso**
 Al presionar (+):
 - Popup:
   - Campo **Course Code**
@@ -306,12 +287,9 @@ Al confirmar:
 2. Se registra al estudiante en el curso.
 3. Se navega a la **vista del curso**.
 
----
-
-### 4.3.4 Vista de Curso (Student)
+**4.3.4 Vista de Curso**
 Muestra:
 - Categorías de grupo donde el estudiante pertenece (por ejemplo “Group Category A”).
-- Si el estudiante aún no está asignado a un grupo (según importación), se muestra estado informativo.
 
 Al entrar a una categoría:
 - Se muestra:
@@ -325,7 +303,7 @@ Al entrar a una categoría:
 
 ---
 
-### 4.3.5 Vista de Assessment (Student)
+**4.3.5 Vista de Assessment**
 Al abrir una actividad:
 1. Se muestra una gráfica con sus resultados (si aplica por visibilidad):
    - Si **Public**: ver score general y por criterio
@@ -345,7 +323,7 @@ Si está **Expirada**:
 
 ---
 
-### 4.3.6 Cursos (Student)
+**4.3.6 Cursos**
 Pantalla “Cursos” muestra:
 - Todos los cursos a los que pertenece
 - Botón (+) para **unirse a curso** (mismo popup)
@@ -353,7 +331,7 @@ Pantalla “Cursos” muestra:
 
 ---
 
-### 4.3.7 Perfil (Student)
+**4.3.7 Perfil**
 - Datos básicos del estudiante
 - Opción flotante/menú: **Log out**
 
@@ -370,6 +348,31 @@ Este mecanismo controla el acceso sin exponer cursos públicamente.
 
 ## 5. Diseño del prototipo:
 [![Diseño de Figma](https://img.shields.io/badge/Diseño_de_Figma--purple)](https://www.figma.com/design/KBR9dHD2k6HqAzglNDpAg4/Movil---Trabajo?node-id=55-4913&t=OhMbymOinxLvQSXz-1)
+
+### 5.1. Componentes
+![alt text](image-1.png)
+
+![alt text](image-2.png)
+
+![alt text](image-3.png)
+
+![alt text](image-4.png)
+
+![alt text](image-5.png)
+
+<br>
+
+### 5.2. Prototipo
+
+![alt text](image-8.png)
+
+![alt text](image-7.png)
+
+![alt text](image-11.png)
+
+![alt text](image-9.png)
+
+![alt text](image-10.png)
 
 <br>
 
