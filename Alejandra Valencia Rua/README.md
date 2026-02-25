@@ -360,20 +360,38 @@ Este mecanismo controla el acceso sin exponer cursos públicamente.
 
 ![alt text](imgs/image-5.png)
 
+![alt text](image.png)
+
 <br>
 
 ### 5.2. Prototipo
 
-<img src="imgs/image-8.png" width="300">
+**Inicio de Sesión y Registro:**
+
+<img src="imgs/image-6.png" width="300">
+
 
 <img src="imgs/image-7.png" width="300">
 
+<br>
+
+**Vistas Teacher:**
+
+
+
+<br>
+
+**Vistas Student:**
+
+<img src="imgs/image-8.png" width="300">
+
 <img src="imgs/image-11.png" width="300">
+
+<img src="imgs/image.png" width="300">
 
 <img src="imgs/image-9.png" width="300">
 
 <img src="imgs/image-10.png" width="300">
-
 <br>
 
 ## 6. Referencias
