@@ -172,7 +172,7 @@ NavBar inferior:
 **4.2.2 Teacher Home (inicio)**
 Al entrar:
 - Se muestran todos los **cursos recientes** creados por el docente.
-- Se muestran **indicadores globales** del docente.
+- Se muestran **indicadores globales** de los cursos del docente.
 
 **Gráficas recomendadas (útiles y alineadas al objetivo):**
 1. **Radar por criterios (promedio global)**: Punctuality, Contributions, Commitment, Attitude.
@@ -267,11 +267,111 @@ Pantalla “Cursos” muestra:
 
 <br>
 
-### 4.3. Flujo: Rol Student
+## 4.3 Flujo: Rol Student
 
+### 4.3.1 Navegación principal (Student)
+NavBar inferior:
+- **Home**
+- **Cursos**
+- **Perfil**
+
+Acción global:
+- Botón flotante **(+) Unirse a curso** (por código).
+
+---
+
+### 4.3.2 Student Home (inicio)
+Al entrar:
+- Cursos recientes
+- Indicadores globales del estudiante
+
+**Gráficas recomendadas (útiles):**
+1. **Radar personal por criterios** (promedio acumulado).
+2. **Línea de progreso** (score general a través del tiempo/actividades).
+3. **Tarjeta de pendientes**: número de evaluaciones activas no completadas.
+
+Acción:
+- Botón flotante **(+) Unirse a curso**.
+
+---
+
+### 4.3.3 Unirse a curso (Student)
+Al presionar (+):
+- Popup:
+  - Campo **Course Code**
+  - ✅ Unirse | ✖️ Cancelar
+
+Al confirmar:
+1. Se valida el código.
+2. Se registra al estudiante en el curso.
+3. Se navega a la **vista del curso**.
+
+---
+
+### 4.3.4 Vista de Curso (Student)
+Muestra:
+- Categorías de grupo donde el estudiante pertenece (por ejemplo “Group Category A”).
+- Si el estudiante aún no está asignado a un grupo (según importación), se muestra estado informativo.
+
+Al entrar a una categoría:
+- Se muestra:
+  1. **Gráfica resumen del estudiante en esa categoría**
+     - score promedio por criterio
+     - score general promedio en esa categoría
+  2. Listado de **Assessments** de esa categoría con estado:
+     - **Activa** (en ventana de tiempo)
+     - **Expirada**
+     - **Pendiente** (si existe una asignación que aún no completa y está activa)
+
+---
+
+### 4.3.5 Vista de Assessment (Student)
+Al abrir una actividad:
+1. Se muestra una gráfica con sus resultados (si aplica por visibilidad):
+   - Si **Public**: ver score general y por criterio
+   - Si **Private**: ocultar resultados (mostrar mensaje “Resultados visibles solo para el docente”)
+2. Debajo:
+   - Estado de la actividad: **Activa / Expirada**
+   - Sección de evaluaciones:
+     - **Pendientes** (si aún no ha evaluado a alguien)
+     - **Realizadas** (si ya evaluó)
+
+Si está **Activa**:
+- Puede evaluar a compañeros (sin incluirse).
+- Puede **editar** evaluaciones ya enviadas mientras la ventana esté abierta (guardar cambios).
+
+Si está **Expirada**:
+- Evaluación en modo lectura (sin edición).
+
+---
+
+### 4.3.6 Cursos (Student)
+Pantalla “Cursos” muestra:
+- Todos los cursos a los que pertenece
+- Botón (+) para **unirse a curso** (mismo popup)
+- Al abrir un curso → mismo flujo descrito en **Vista de Curso**.
+
+---
+
+### 4.3.7 Perfil (Student)
+- Datos básicos del estudiante
+- Opción flotante/menú: **Log out**
+
+---
+
+## 4.4 Verificación privada (requisito de invitación)
+Para cumplir el requisito de “invitación privada o verificación”, el sistema genera un **Course Code** al crear un curso.  
+El docente comparte este código con sus estudiantes, y el estudiante lo utiliza para unirse.  
+Este mecanismo controla el acceso sin exponer cursos públicamente.
+
+
+
+<br>
 
 ## 5. Diseño del prototipo:
-![https://www.figma.com/design/KBR9dHD2k6HqAzglNDpAg4/Movil---Trabajo?node-id=55-4913&t=OhMbymOinxLvQSXz-1](https://img.shields.io/badge/Diseño_de_Figma--purple)
+[![Diseño de Figma](https://img.shields.io/badge/Diseño_de_Figma--purple)](https://www.figma.com/design/KBR9dHD2k6HqAzglNDpAg4/Movil---Trabajo?node-id=55-4913&t=OhMbymOinxLvQSXz-1)
+
+<br>
 
 ## 6. Referencias
 
