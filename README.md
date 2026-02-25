@@ -46,3 +46,7 @@ La aplicación contempla dos tipos de usuarios:
 * Elvira Elena Florez Carbonell
 * Keiver De Jesus Miranda Lemus
 * Alejandra Valencia Rua
+
+### 📱 Prototipo del Proyecto
+<video src="https://github.com/user-attachments/assets/e0448fcd-0997-44ec-b03a-7e28b06c7975" controls autoplay loop muted style="max-width: 100%; border-radius: 10px;">
+</video>
