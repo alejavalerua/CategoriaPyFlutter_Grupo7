@@ -360,8 +360,6 @@ Este mecanismo controla el acceso sin exponer cursos públicamente.
 
 ![alt text](imgs/image-5.png)
 
-![alt text](image.png)
-
 <br>
 
 ### 5.2. Prototipo
@@ -376,6 +374,17 @@ Este mecanismo controla el acceso sin exponer cursos públicamente.
 <br>
 
 **Vistas Teacher:**
+
+<img src="imgs/image-12.png" width="300">
+
+<img src="imgs/image-15.png" width="300">
+
+<img src="imgs/image-13.png" width="300">
+
+<img src="imgs/image-16.png" width="300">
+
+<img src="imgs/image-14.png" width="300">
+<br>
 
 
 
