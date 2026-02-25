@@ -1,4 +1,4 @@
-# 📱 Squadria: Structured Peer Assessment App
+# 📱 PeerSync: Structured Peer Assessment App
 Aplicación móvil desarrollada en **Flutter** que permite la evaluación entre pares en actividades colaborativas académicas, facilitando el seguimiento del desempeño individual dentro de trabajos en grupo.
 
 
