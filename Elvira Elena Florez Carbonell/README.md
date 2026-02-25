@@ -350,30 +350,57 @@ Este mecanismo controla el acceso sin exponer cursos públicamente.
 [![Diseño de Figma](https://img.shields.io/badge/Diseño_de_Figma--purple)](https://www.figma.com/design/KBR9dHD2k6HqAzglNDpAg4/Movil---Trabajo?node-id=55-4913&t=OhMbymOinxLvQSXz-1)
 
 ### 5.1. Componentes
-![alt text](image-1.png)
+![alt text](imgs/image-1.png)
 
-![alt text](image-2.png)
+![alt text](imgs/image-2.png)
 
-![alt text](image-3.png)
+![alt text](imgs/image-3.png)
 
-![alt text](image-4.png)
+![alt text](imgs/image-4.png)
 
-![alt text](image-5.png)
+![alt text](imgs/image-5.png)
 
 <br>
 
 ### 5.2. Prototipo
 
-![alt text](image-8.png)
+**Inicio de Sesión y Registro:**
 
-![alt text](image-7.png)
+<img src="imgs/image-6.png" width="300">
 
-![alt text](image-11.png)
 
-![alt text](image-9.png)
+<img src="imgs/image-7.png" width="300">
 
-![alt text](image-10.png)
+<br>
 
+**Vistas Teacher:**
+
+<img src="imgs/image-12.png" width="300">
+
+<img src="imgs/image-15.png" width="300">
+
+<img src="imgs/image-13.png" width="300">
+
+<img src="imgs/image-16.png" width="300">
+
+<img src="imgs/image-14.png" width="300">
+<br>
+
+
+
+<br>
+
+**Vistas Student:**
+
+<img src="imgs/image-8.png" width="300">
+
+<img src="imgs/image-11.png" width="300">
+
+<img src="imgs/image.png" width="300">
+
+<img src="imgs/image-9.png" width="300">
+
+<img src="imgs/image-10.png" width="300">
 <br>
 
 ## 6. Referencias
