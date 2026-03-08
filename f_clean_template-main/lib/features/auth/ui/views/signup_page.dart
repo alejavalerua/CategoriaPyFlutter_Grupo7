@@ -1,130 +1,116 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:loggy/loggy.dart';
-import '../viewmodels/authentication_controller.dart';
+import '../controllers/auth_controller.dart'; // Asegúrate de que la ruta sea correcta
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+class SignUpPage extends GetView<AuthController> {
+  // En un proyecto real, estos controladores deberían definirse y limpiarse 
+  // dentro del AuthController para separar la lógica de la UI, pero para 
+  // propósitos visuales iniciales los pondremos aquí.
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  @override
-  State<SignUpPage> createState() => _SignUpPageState();
-}
-
-class _SignUpPageState extends State<SignUpPage> {
-  final controllerEmail = TextEditingController(
-    text: 'augustosalazar@uninorte.edu.co',
-  );
-  final controllerPassword = TextEditingController(text: 'ThePassword1!');
-  final controllerValidation = TextEditingController();
-  AuthenticationController authenticationController = Get.find();
-
-  Future<void> _signup(String theEmail, String thePassword) async {
-    try {
-      await authenticationController.signUp(theEmail, thePassword);
-
-      Get.snackbar(
-        "Sign Up",
-        'User created successfully',
-        icon: const Icon(Icons.person, color: Colors.red),
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    } catch (err) {
-      logError('SignUp error $err');
-      Get.snackbar(
-        "Sign Up",
-        err.toString(),
-        icon: const Icon(Icons.person, color: Colors.red),
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    }
-  }
+  SignUpPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Sign Up"), centerTitle: true),
+      backgroundColor: const Color(0xFFF8F9FE), // Fondo suave
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF1A1A3F)),
+          onPressed: () => Get.back(), // Navegación nativa de GetX
+        ),
+      ),
       body: Center(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: registerPhaseWidget(context, GlobalKey<FormState>()),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Logo
+              const Icon(Icons.people_alt_rounded, size: 80, color: Color(0xFF9D74DE)),
+              const SizedBox(height: 20),
+              
+              // Título
+              const Text("Crear cuenta", 
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFF1A1A3F))),
+              
+              // Subtítulo
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("¿Ya tienes una cuenta? ", style: TextStyle(color: Colors.grey)),
+                  GestureDetector(
+                    onTap: () => Get.back(), // Regresa al login que ya está en la pila
+                    child: const Text("Inicia sesión", style: TextStyle(color: Color(0xFF9D74DE), fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
+              
+              // Contenedor de Inputs
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))]
+                ),
+                child: Column(
+                  children: [
+                    _buildTextField(hint: "Nombre completo", icon: Icons.person_outline, controller: nameController),
+                    const Divider(height: 1),
+                    _buildTextField(hint: "Correo electrónico", icon: Icons.email_outlined, controller: emailController),
+                    const Divider(height: 1),
+                    _buildTextField(hint: "Contraseña", icon: Icons.lock_outline, isPassword: true, controller: passwordController),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 40),
+              
+              // Botón de Registrarse reactivo
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: Obx(() => ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF7A58BC), // Color morado del botón
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
+                  ),
+                  onPressed: controller.isLoading 
+                    ? null 
+                    : () {
+                        // Aquí llamaremos al método de registro de tu controlador
+                        // NOTA: Como aún no agregas 'nombre' a tu modelo, lo omitimos por ahora
+                        controller.signUp(emailController.text, passwordController.text, 'student');
+                      },
+                  child: controller.isLoading 
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text("Registrarse", style: TextStyle(fontSize: 18, color: Colors.white)),
+                )),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Form registerPhaseWidget(BuildContext context, GlobalKey<FormState> key) {
-    return Form(
-      key: key,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text("Sign Up Information", style: TextStyle(fontSize: 20)),
-          const SizedBox(height: 20),
-          TextFormField(
-            keyboardType: TextInputType.emailAddress,
-            controller: controllerEmail,
-            decoration: const InputDecoration(
-              labelText: "Email address",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-              ),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                logError('SignUp validation empty email');
-                return "Enter email";
-              } else if (!value.contains('@')) {
-                logError('SignUp validation invalid email');
-                return "Enter valid email address";
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 20),
-          TextFormField(
-            controller: controllerPassword,
-            decoration: const InputDecoration(
-              labelText: "Password",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-              ),
-            ),
-            keyboardType: TextInputType.number,
-            obscureText: true,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return "Enter password";
-              } else if (value.length < 6) {
-                return "Password should have at least 6 characters";
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: FilledButton.tonal(
-                  onPressed: () async {
-                    final form = key.currentState;
-                    form!.save();
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    if (key.currentState!.validate()) {
-                      logInfo('SignUp validation form ok');
-                      await _signup(
-                        controllerEmail.text,
-                        controllerPassword.text,
-                      );
-                    } else {
-                      logError('SignUp validation form nok');
-                    }
-                  },
-                  child: const Text("Submit"),
-                ),
-              ),
-            ],
-          ),
-        ],
+  // Widget reutilizable para los campos de texto
+  Widget _buildTextField({required String hint, required IconData icon, bool isPassword = false, required TextEditingController controller}) {
+    return TextField(
+      controller: controller,
+      obscureText: isPassword,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: Colors.grey.shade400),
+        prefixIcon: Icon(icon, color: const Color(0xFF7A58BC)),
+        suffixIcon: isPassword ? const Icon(Icons.visibility_off_outlined, color: Colors.grey) : null,
+        border: InputBorder.none,
+        contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
       ),
     );
   }

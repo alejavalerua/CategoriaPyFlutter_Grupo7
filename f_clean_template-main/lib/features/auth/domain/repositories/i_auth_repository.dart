@@ -1,15 +1,6 @@
-import '../models/authentication_user.dart';
+import 'package:peer_sync/features/auth/domain/models/auth_user.dart';
 
 abstract class IAuthRepository {
-  Future<bool> login(AuthenticationUser user);
-
-  Future<bool> signUp(AuthenticationUser user);
-
-  Future<bool> logOut();
-
-  Future<bool> validate(String email, String validationCode);
-
-  Future<bool> validateToken();
-
-  Future<void> forgotPassword(String email);
+  Future<AuthUser> signIn(String email, String password);
+  Future<AuthUser> signUp(String email, String password, String role);
 }

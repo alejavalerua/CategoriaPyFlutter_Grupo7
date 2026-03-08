@@ -1,4 +1,4 @@
-package com.example.f_clean_template
+package com.example.peer_sync
 
 import io.flutter.embedding.android.FlutterActivity
 
