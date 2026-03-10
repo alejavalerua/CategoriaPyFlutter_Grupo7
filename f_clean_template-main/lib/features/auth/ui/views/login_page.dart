@@ -36,7 +36,7 @@ class LoginPage extends GetView<AuthController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("¿No tienes una cuenta? ", style: TextStyle(color: Colors.white70)),
+                  const Text("¿No tienes una cuenta? ", style: TextStyle(color: Color(0xFF8A8E97))),
                   GestureDetector(
                     // Navegación purista con GetX a la vista de registro
                     onTap: () => Get.toNamed('/signup'),

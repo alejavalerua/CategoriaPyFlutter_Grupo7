@@ -42,7 +42,7 @@ class SignUpPage extends GetView<AuthController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("¿Ya tienes una cuenta? ", style: TextStyle(color: Colors.white70)),
+                  const Text("¿Ya tienes una cuenta? ", style: TextStyle(color: Color(0xFF8A8E97))), // Texto blanco)),
                   GestureDetector(
                     onTap: () => Get.back(), // Regresa al login que ya está en la pila de GetX
                     child: const Text(
