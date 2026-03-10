@@ -60,9 +60,9 @@ class NavBar extends StatelessWidget {
 
           Row(
             children: [
-              Expanded(child: navItem(Icons.menu_book, "Cursos", 0)),
-              Expanded(child: navItem(Icons.home, "Home", 1)),
-              Expanded(child: navItem(Icons.person, "Perfil", 2)),
+              Expanded(child: navItem(Icons.layers, "Cursos", 0)),
+              Expanded(child: navItem(Icons.home_rounded, "Home", 1)),
+              Expanded(child: navItem(Icons.person_outline_rounded, "Perfil", 2)),
             ],
           ),
         ],

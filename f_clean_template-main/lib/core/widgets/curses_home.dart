@@ -8,6 +8,30 @@ class CoursesSection extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Cursos Agregados",
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFAF95DE),
+                ),
+              ),
+
+              Text(
+                "View All",
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFFBF94FF),
+                ),
+              ),
+            ],
+          ),
           SizedBox(height: 20),
           Row(
             children: [

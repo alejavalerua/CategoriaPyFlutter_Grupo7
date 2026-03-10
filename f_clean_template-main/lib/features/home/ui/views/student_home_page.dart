@@ -15,43 +15,48 @@ class StudentHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
+        padding: const EdgeInsets.only(top: 40, left: 25, right: 25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Home",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryColor,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        "Home",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryColor,
+                        ),
                       ),
-                    ),
-                    const Text(
-                      "Contenido Reciente",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
-                        color: AppTheme.secondaryColor,
+                      Text(
+                        "Contenido Reciente",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.secondaryColor,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(
-                    Icons.notifications_none,
-                    size: 28,
-                    color: Color(0xFF110E47),
+                    ],
                   ),
-                  onPressed: openNotifications,
-                ),
-              ],
+
+                  const Spacer(),
+
+                  IconButton(
+                    icon: const Icon(
+                      Icons.notifications_none,
+                      size: 28,
+                      color: Color(0xFF110E47),
+                    ),
+                    onPressed: openNotifications,
+                  ),
+                ],
+              ),
             ),
 
             const SizedBox(height: 20),
@@ -60,59 +65,9 @@ class StudentHomePage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Cursos Agregados",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFAF95DE),
-                  ),
-                ),
-
-                Text(
-                  "View All",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFFBF94FF),
-                  ),
-                ),
-              ],
-            ),
-
             CoursesSection(),
 
             const SizedBox(height: 30),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Actividades Agregadas",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFAF95DE),
-                  ),
-                ),
-
-                Text(
-                  "View All",
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFFBF94FF),
-                  ),
-                ),
-              ],
-            ),
 
             ActivitiesSection(),
 
