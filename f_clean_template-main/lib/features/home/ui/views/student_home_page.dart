@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peer_sync/core/widgets/graph.dart';
 
 class StudentHomePage extends StatelessWidget {
   const StudentHomePage({super.key});
@@ -22,11 +23,9 @@ class StudentHomePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           /// HOME + CAMPANA
           Row(
             children: [
-
               const Text(
                 "Home",
                 style: TextStyle(
@@ -60,10 +59,13 @@ class StudentHomePage extends StatelessWidget {
 
           const SizedBox(height: 20),
 
+          EvaluationCard(),
+
+          const SizedBox(height: 30),
+
           /// CURSOS
           Row(
             children: [
-
               const Text(
                 "Cursos Agregados",
                 style: TextStyle(
@@ -94,7 +96,6 @@ class StudentHomePage extends StatelessWidget {
           /// ACTIVIDADES
           Row(
             children: [
-
               const Text(
                 "Actividades Agregadas",
                 style: TextStyle(
