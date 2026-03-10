@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/auth_controller.dart'; // Asegúrate de que la ruta sea correcta
+import 'package:peer_sync/features/auth/ui/viewmodels/auth_controller.dart'; // Asegúrate de que la ruta sea correcta
 
 class SignUpPage extends GetView<AuthController> {
   SignUpPage({super.key});

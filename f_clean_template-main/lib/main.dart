@@ -11,7 +11,7 @@ import 'features/auth/data/datasources/remote/authentication_source_service.dart
 import 'features/auth/data/datasources/remote/i_authentication_source.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
 import 'features/auth/domain/repositories/i_auth_repository.dart';
-import 'features/auth/ui/controllers/auth_controller.dart';
+import 'features/auth/ui/viewmodels/auth_controller.dart';
 import 'features/product/data/datasources/i_remote_product_source.dart';
 import 'features/product/data/repositories/product_repository.dart';
 import 'features/product/domain/repositories/i_product_repository.dart';
@@ -30,7 +30,7 @@ void main() {
   // Auth
   Get.put<IAuthenticationSource>(AuthenticationSourceService());
   Get.put<IAuthRepository>(AuthRepositoryImpl());
-  Get.put(AuthController(repository: Get.find()));
+  Get.put<AuthController>(AuthController(repository: Get.find()));
 
   // Product
   //Get.put<IProductSource>(
