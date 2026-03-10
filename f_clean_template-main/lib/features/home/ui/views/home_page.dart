@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-
-// importar navbar
 import 'package:peer_sync/core/widgets/navbar.dart';
-
-// importar páginas
+import 'package:peer_sync/core/themes/app_theme.dart';
 import 'student_home_page.dart';
 import 'student_courses_page.dart';
 import 'student_profile_page.dart';
@@ -32,10 +29,10 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       /// cambia dependiendo del index seleccionado
       body: pages[currentIndex],
-
+      backgroundColor: AppTheme.backgroundColor,
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        backgroundColor: const Color(0xFFAF95DE),
+        backgroundColor: AppTheme.secondaryColor,
         child: const Icon(Icons.add),
       ),
 

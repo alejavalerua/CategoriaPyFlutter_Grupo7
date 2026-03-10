@@ -1,21 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.grey[200],
-        body: Center(child: CoursesSection()),
-      ),
-    );
-  }
-}
-
 class CoursesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -24,35 +8,7 @@ class CoursesSection extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// HEADER
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Cursos Agregados",
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFAF95DE),
-                ),
-              ),
-
-              Text(
-                "View All",
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFFBF94FF),
-                ),
-              ),
-            ],
-          ),
-
           SizedBox(height: 20),
-
-          /// FILA DE TARJETAS
           Row(
             children: [
               CourseCard(
