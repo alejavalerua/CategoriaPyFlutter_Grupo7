@@ -1,145 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:loggy/loggy.dart';
-import '../viewmodels/authentication_controller.dart';
-import 'signup_page.dart';
+import '../controllers/auth_controller.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  final controllerEmail = TextEditingController(
-    text: 'augustosalazar@uninorte.edu.co',
-  );
-  final controllerPassword = TextEditingController(text: 'ThePassword1!');
-  AuthenticationController authenticationController = Get.find();
-
-  Future<void> _login(String theEmail, String thePassword) async {
-    logInfo('_login $theEmail $thePassword');
-    try {
-      await authenticationController.login(theEmail, thePassword);
-    } catch (err) {
-      Get.snackbar(
-        "Login",
-        err.toString(),
-        icon: const Icon(Icons.person, color: Colors.red),
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    }
-  }
-
+class LoginPage extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Form(
-              key: _formKey,
-              child: Column(
+      backgroundColor: const Color(0xFFF8F9FE), // Fondo suave de la imagen
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Logo (puedes usar un Icon por ahora si no tienes el asset)
+              const Icon(Icons.people_alt_rounded, size: 80, color: Colors.deepPurpleAccent),
+              const SizedBox(height: 20),
+              const Text("Inicia Sesión", 
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFF1A1A3F))),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    "Login to access your account",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  const SizedBox(height: 30),
-                  TextFormField(
-                    keyboardType: TextInputType.emailAddress,
-                    controller: controllerEmail,
-                    decoration: const InputDecoration(
-                      labelText: "Email address",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
-                    ),
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return "Enter email";
-                      } else if (!value.contains('@')) {
-                        return "Enter valid email address";
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: controllerPassword,
-                    decoration: const InputDecoration(
-                      labelText: "Password",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
-                    ),
-                    obscureText: true,
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return "Enter password";
-                      } else if (value.length < 6) {
-                        return "Password should have at least 6 characters";
-                      }
-                      return null;
-                    },
-                    onFieldSubmitted: (value) async {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      final form = _formKey.currentState;
-                      form!.save();
-                      if (_formKey.currentState!.validate()) {
-                        await _login(
-                          controllerEmail.text,
-                          controllerPassword.text,
-                        );
-                      }
-                    },
-                  ),
-
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: FilledButton.tonal(
-                          onPressed: () async {
-                            // this line dismiss the keyboard by taking away the focus of the TextFormField and giving it to an unused
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            final form = _formKey.currentState;
-                            form!.save();
-                            if (_formKey.currentState!.validate()) {
-                              await _login(
-                                controllerEmail.text,
-                                controllerPassword.text,
-                              );
-                            }
-                          },
-                          child: const Text("Login"),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignUpPage(),
-                        ),
-                      );
-                    },
-                    child: const Text("Create account"),
+                  const Text("¿No tienes una cuenta? "),
+                  GestureDetector(
+                    onTap: () => Get.toNamed('/signup'),
+                    child: const Text("Regístrate", style: TextStyle(color: Colors.deepPurpleAccent, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 40),
+              
+              // Contenedor de Inputs
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)]
+                ),
+                child: Column(
+                  children: [
+                    _buildTextField(hint: "pepitojm@uninorte.edu.co", icon: Icons.email_outlined),
+                    const Divider(height: 1),
+                    _buildTextField(hint: "*******", icon: Icons.lock_outline, isPassword: true),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 20),
+              TextButton(onPressed: () {}, child: const Text("¿Olvidaste tu contraseña?", style: TextStyle(color: Colors.grey))),
+              
+              const SizedBox(height: 30),
+              
+              // Botón de Iniciar Sesión reactivo
+              SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: Obx(() => ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurpleAccent,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
+                  ),
+                  onPressed: controller.isLoading ? null : () => controller.login("email", "pass"),
+                  child: controller.isLoading 
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text("Iniciar Sesión", style: TextStyle(fontSize: 18, color: Colors.white)),
+                )),
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({required String hint, required IconData icon, bool isPassword = false}) {
+    return TextField(
+      obscureText: isPassword,
+      decoration: InputDecoration(
+        hintText: hint,
+        prefixIcon: Icon(icon, color: Colors.deepPurpleAccent.withOpacity(0.5)),
+        border: InputBorder.none,
+        contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
       ),
     );
   }

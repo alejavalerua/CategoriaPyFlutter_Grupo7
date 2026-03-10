@@ -1,5 +1,5 @@
-name: f_clean_template
-description: "A new Flutter project."
+name: peer_sync
+description: "Aplicación móvil desarrollada en Flutter que permite la evaluación entre pares en actividades colaborativas académicas, facilitando el seguimiento del desempeño individual dentro de trabajos en grupo."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -40,6 +40,7 @@ dependencies:
   cupertino_icons: ^1.0.8
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.13.1"
   flutter_test:
     sdk: flutter
 
@@ -91,3 +92,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/icon.png"
+  # Esto es para que en Android el icono no se vea mal
+  adaptive_icon_background: "#ffffff" 
+  adaptive_icon_foreground: "assets/icon/icon.png"
