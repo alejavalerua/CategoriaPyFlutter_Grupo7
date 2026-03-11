@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:peer_sync/features/auth/ui/viewmodels/auth_controller.dart'; // Asegúrate de que la ruta sea correcta
+import 'package:peer_sync/core/themes/app_theme.dart';
 
 class SignUpPage extends GetView<AuthController> {
   SignUpPage({super.key});
@@ -14,12 +15,12 @@ class SignUpPage extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FE), // Fondo suave
+      backgroundColor: AppTheme.backgroundColor, // Fondo suave
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1A1A3F)),
+          icon: const Icon(Icons.arrow_back, color: AppTheme.textColor),
           onPressed: () => Get.back(), // Navegación nativa de GetX
         ),
       ),
@@ -89,20 +90,20 @@ class SignUpPage extends GetView<AuthController> {
                     _buildTextField(
                       hint: "Nombre completo",
                       icon: Icons.person_outline,
-                      controller: nameController,
+                      textController: controller.signUpNameController,
                     ),
                     const Divider(height: 1),
                     _buildTextField(
                       hint: "Correo electrónico",
                       icon: Icons.email_outlined,
-                      controller: emailController,
+                      textController: controller.signUpEmailController,
                     ),
                     const Divider(height: 1),
                     _buildTextField(
                       hint: "Contraseña",
                       icon: Icons.lock_outline,
                       isPassword: true,
-                      controller: passwordController,
+                      textController: controller.signUpPasswordController,
                     ),
                   ],
                 ),
@@ -155,22 +156,51 @@ class SignUpPage extends GetView<AuthController> {
     required String hint,
     required IconData icon,
     bool isPassword = false,
-    required TextEditingController controller,
+    required TextEditingController textController,
   }) {
-    return TextField(
-      controller: controller,
-      obscureText: isPassword,
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: TextStyle(color: Colors.grey.shade400),
-        prefixIcon: Icon(icon, color: const Color(0xFF7A58BC)),
-        suffixIcon: isPassword
-            ? const Icon(Icons.visibility_off_outlined, color: Colors.grey)
-            : null,
-        border: InputBorder.none,
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 20,
-          horizontal: 15,
+    if (!isPassword) {
+      return TextField(
+        controller: textController,
+        style: const TextStyle(color: Colors.black87),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: const TextStyle(color: Colors.black38),
+          prefixIcon: Icon(icon, color: AppTheme.primaryColor.withOpacity(0.6)),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 20,
+            horizontal: 20,
+          ),
+        ),
+      );
+    }
+
+    // SOLO el password necesita Obx
+    return Obx(
+      () => TextField(
+        controller: textController,
+        obscureText: controller.obscurePassword.value,
+        style: const TextStyle(color: Colors.black87),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: const TextStyle(color: Colors.black38),
+          prefixIcon: Icon(icon, color: AppTheme.primaryColor.withOpacity(0.6)),
+          suffixIcon: Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: IconButton(
+              icon: Icon(
+                controller.obscurePassword.value
+                    ? Icons.visibility_off
+                    : Icons.visibility,
+              ),
+              onPressed: controller.togglePasswordVisibility,
+            ),
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 20,
+            horizontal: 20,
+          ),
         ),
       ),
     );
