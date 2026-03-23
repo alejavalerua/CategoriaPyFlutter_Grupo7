@@ -17,14 +17,7 @@ class SignUpPage extends GetView<AuthController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppTheme.textColor),
-          onPressed: () => Get.back(),
-        ),
-      ),
+
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -34,13 +27,9 @@ class SignUpPage extends GetView<AuthController> {
               const AuthLogo(),
               const SizedBox(height: 20),
 
-              const Text(
+              Text(
                 "Crear cuenta",
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1A1A3F),
-                ),
+                style: AppTheme.h1.copyWith(color: AppTheme.textColor),
               ),
 
               Row(
@@ -105,9 +94,9 @@ class SignUpPage extends GetView<AuthController> {
                         ? null
                         : () {
                             controller.signUp(
-                              emailController.text,
-                              passwordController.text,
-                              'student',
+                              controller.signUpEmailController.text.trim(),
+                              controller.signUpPasswordController.text.trim(),
+                              controller.signUpNameController.text.trim(),
                             );
                           },
                     child: controller.isLoading.value
