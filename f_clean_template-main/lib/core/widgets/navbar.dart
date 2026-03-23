@@ -28,7 +28,7 @@ class NavBar extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Container(
-      height: 70,
+      height: 90,
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [

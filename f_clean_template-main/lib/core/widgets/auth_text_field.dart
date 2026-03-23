@@ -42,8 +42,13 @@ class AuthTextField extends GetView<AuthController> {
       () => TextField(
         controller: controllerText,
         obscureText: controller.obscurePassword.value,
+        onChanged: isPassword ? controller.validatePassword : null,
         style: const TextStyle(color: Colors.black87),
         decoration: InputDecoration(
+          errorText: isPassword
+              ? controller.passwordError.value
+              : null, // MUESTRA EL ERROR
+          errorStyle: const TextStyle(fontSize: 11, color: Colors.redAccent),
           fillColor: Colors.white,
           hoverColor: Colors.white,
           hintText: hint,

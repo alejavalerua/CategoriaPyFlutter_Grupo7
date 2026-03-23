@@ -1,65 +1,41 @@
-import 'package:loggy/loggy.dart';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../../domain/models/authentication_user.dart';
 import 'i_authentication_source.dart';
 
 class AuthenticationSourceService implements IAuthenticationSource {
   final http.Client httpClient;
+  final String baseUrl = 'https://roble-api.openlab.uninorte.edu.co/auth/peer_sync_2e18809588';
 
   AuthenticationSourceService({http.Client? client})
     : httpClient = client ?? http.Client();
 
   @override
-  Future<bool> login(AuthenticationUser user) async {
-    logInfo("Attempting login for email: ${user.email}");
-    return Future.value(true);
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final response = await httpClient.post(
+      Uri.parse('$baseUrl/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'password': password}),
+    );
 
-    // in case of error
-    // return Future.error('Login failed');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return jsonDecode(response.body); // Retorna accessToken y refreshToken
+    } else {
+      throw Exception('Error en Login: ${response.body}');
+    }
   }
 
   @override
-  Future<bool> signUp(AuthenticationUser user) async {
-    logInfo("Attempting sign up for email: ${user.email}");
-    return Future.value(true);
-  }
+  Future<Map<String, dynamic>> signUp(String email, String password, String name) async {
+    final response = await httpClient.post(
+      Uri.parse('$baseUrl/signup-direct'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'password': password, 'name': name}),
+    );
 
-  @override
-  Future<bool> logOut() async {
-    logInfo("Attempting logout");
-    return Future.value(true);
-  }
-
-  @override
-  Future<bool> validate(String email, String validationCode) async {
-    logInfo("Attempting email validation for email: $email");
-    return Future.value(true);
-  }
-
-  @override
-  Future<bool> refreshToken() async {
-    logInfo("Attempting token refresh");
-    return Future.value(true);
-  }
-
-  @override
-  Future<bool> forgotPassword(String email) async {
-    logInfo("Attempting password reset for email: $email");
-    return Future.value(true);
-  }
-
-  @override
-  Future<bool> resetPassword(
-    String email,
-    String newPassword,
-    String validationCode,
-  ) async {
-    return Future.value(true);
-  }
-
-  @override
-  Future<bool> verifyToken() async {
-    logInfo("Attempting token verification");
-    return Future.value(true);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Error en SignUp: ${response.body}');
+    }
   }
 }

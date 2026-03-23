@@ -1,23 +1,5 @@
-import '../../../domain/models/authentication_user.dart';
-
 abstract class IAuthenticationSource {
-  Future<bool> login(AuthenticationUser user);
-
-  Future<bool> signUp(AuthenticationUser user);
-
-  Future<bool> logOut();
-
-  Future<bool> validate(String email, String validationCode);
-
-  Future<bool> refreshToken();
-
-  Future<bool> forgotPassword(String email);
-
-  Future<bool> resetPassword(
-    String email,
-    String newPassword,
-    String validationCode,
-  );
-
-  Future<bool> verifyToken();
+  Future<Map<String, dynamic>> login(String email, String password);
+  Future<Map<String, dynamic>> signUp(String email, String password, String name);
+  // Los demás métodos los dejamos para después
 }

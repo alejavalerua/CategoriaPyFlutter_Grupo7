@@ -17,6 +17,26 @@ class AuthController extends GetxController {
 
   // Estados reactivos
   final isLoading = false.obs;
+  final passwordError = RxnString();
+  void validatePassword(String value) {
+    if (value.isEmpty) {
+      passwordError.value = null;
+      return;
+    }
+
+    List<String> missing = [];
+    if (value.length < 8) missing.add("8 caracteres");
+    if (!value.contains(RegExp(r'[A-Z]'))) missing.add("mayúscula");
+    if (!value.contains(RegExp(r'[a-z]'))) missing.add("minúscula");
+    if (!value.contains(RegExp(r'[0-9]'))) missing.add("número");
+    if (!value.contains(RegExp(r'[!@#$_\-]'))) missing.add(r"símbolo (!@#_-$)");
+
+    if (missing.isEmpty) {
+      passwordError.value = null;
+    } else {
+      passwordError.value = "Falta: ${missing.join(', ')}";
+    }
+  }
 
   final _user = Rxn<AuthUser>();
   AuthUser? get user => _user.value;
@@ -42,33 +62,42 @@ class AuthController extends GetxController {
       // Navegación limpia con GetX al Home
       Get.offAllNamed('/home');
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Credenciales incorrectas',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      // print("🔴 ===== ERROR DE ROBLE =====");
+      // print(e.toString());
+      // print("🔴 ==========================");
+
+      if (Get.context != null) {
+        ScaffoldMessenger.of(Get.context!).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<void> signUp(String email, String password, String role) async {
+  Future<void> signUp(String email, String password, String name) async {
     try {
       isLoading.value = true;
-
-      // Llamamos al repositorio que implementaste previamente
-      final newUser = await repository.signUp(email, password, role);
-
+      final newUser = await repository.signUp(email, password, name);
       _user.value = newUser;
-
-      // Navegación limpia con GetX al Home tras registrarse exitosamente
       Get.offAllNamed('/home');
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'No se pudo crear la cuenta',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      print("🔴 ===== ERROR DE ROBLE =====");
+      print(e.toString());
+      print("🔴 ==========================");
+
+      if (Get.context != null) {
+        ScaffoldMessenger.of(Get.context!).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
     } finally {
       isLoading.value = false;
     }

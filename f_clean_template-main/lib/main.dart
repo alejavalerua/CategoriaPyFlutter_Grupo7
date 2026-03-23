@@ -9,7 +9,7 @@ import 'core/themes/app_theme.dart';
 
 import 'features/auth/data/datasources/remote/authentication_source_service.dart';
 import 'features/auth/data/datasources/remote/i_authentication_source.dart';
-import 'features/auth/data/repositories/auth_repository.dart';
+
 import 'features/auth/domain/repositories/i_auth_repository.dart';
 import 'features/auth/ui/viewmodels/auth_controller.dart';
 import 'features/product/data/datasources/i_remote_product_source.dart';
@@ -29,13 +29,10 @@ void main() {
 
   // Auth
   Get.put<IAuthenticationSource>(AuthenticationSourceService());
-  Get.put<IAuthRepository>(AuthRepositoryImpl());
+  Get.put<IAuthRepository>(AuthRepositoryImpl(Get.find()));
   Get.put<AuthController>(AuthController(repository: Get.find()));
 
-  // Product
-  //Get.put<IProductSource>(
-  //  RemoteProductSource(Get.find<http.Client>(tag: 'apiClient')),
-  //);
+  
   Get.put<IProductSource>(LocalProductSource());
   Get.put<IProductRepository>(ProductRepository(Get.find()));
   Get.lazyPut(() => ProductController(Get.find()));
