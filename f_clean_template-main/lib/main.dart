@@ -54,8 +54,22 @@ class MyApp extends StatelessWidget {
 
       getPages: [
         GetPage(name: '/', page: () => const Central()),
-        GetPage(name: '/login', page: () => const LoginPage()),
-        GetPage(name: '/signup', page: () => SignUpPage()),
+        GetPage(
+          name: '/login', 
+          page: () => const LoginPage(),
+          transition: Transition.fade,
+          transitionDuration: const Duration(milliseconds: 350),
+          curve: Curves.easeInOut,
+          opaque: true,
+        ),
+        GetPage(
+          name: '/signup', 
+          page: () => SignUpPage(),
+          transition: Transition.fade,
+          transitionDuration: const Duration(milliseconds: 350),
+          curve: Curves.easeInOut,
+          opaque: true,
+        ),
         GetPage(name: '/home', page: () => const HomePage()),
       ],
     );

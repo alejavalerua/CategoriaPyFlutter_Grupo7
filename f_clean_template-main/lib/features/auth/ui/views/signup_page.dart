@@ -40,7 +40,7 @@ class SignUpPage extends GetView<AuthController> {
                     style: TextStyle(color: Colors.grey),
                   ),
                   GestureDetector(
-                    onTap: () => Get.back(),
+                    onTap: () => Get.toNamed('/login'),
                     child: const Text(
                       "Inicia sesión",
                       style: TextStyle(
