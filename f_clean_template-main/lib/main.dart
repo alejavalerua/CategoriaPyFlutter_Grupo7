@@ -1,3 +1,8 @@
+import 'package:peer_sync/features/groups/data/datasources/remote/groups_remote_source.dart';
+import 'package:peer_sync/features/groups/data/datasources/remote/i_groups_remote_source.dart';
+import 'package:peer_sync/features/groups/data/repositories/groups_repository_impl.dart';
+import 'package:peer_sync/features/groups/domain/repositories/i_groups_repository.dart';
+import 'package:peer_sync/features/groups/ui/viewmodels/groups_controller.dart';
 import 'package:peer_sync/features/product/data/datasources/local/local_product_source.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,6 +38,10 @@ void main() {
   Get.put<IAuthenticationSource>(AuthenticationSourceService());
   Get.put<IAuthRepository>(AuthRepositoryImpl(Get.find()));
   Get.put<AuthController>(AuthController(repository: Get.find()));
+
+  Get.put<IGroupsRemoteSource>(GroupsRemoteSource());
+  Get.put<IGroupsRepository>(GroupsRepositoryImpl(Get.find()));
+  Get.put<GroupsController>(GroupsController(Get.find()));
 
   Get.put<IProductSource>(LocalProductSource());
   Get.put<IProductRepository>(ProductRepository(Get.find()));

@@ -6,7 +6,6 @@ import 'package:peer_sync/features/course/ui/viewmodels/course_controller.dart';
 import 'package:peer_sync/features/student/ui/views/student_profile_page.dart';
 import 'student_home_page.dart';
 import 'student_courses_page.dart';
-import 'Profile_page.dart';
 import 'package:get/get.dart';
 
 class HomePageSt extends StatefulWidget {
