@@ -93,6 +93,7 @@ class TeacherCoursesPage extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (_) => CourseDetailPage(
+                              courseId: course.id,
                               courseTitle: course.name,
                               categories: const [], // luego backend
                             ),

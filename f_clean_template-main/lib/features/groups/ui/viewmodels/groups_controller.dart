@@ -45,4 +45,27 @@ class GroupsController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  Future<void> importCsvData(String courseId, String csvString) async {
+    try {
+      isLoading.value = true;
+      print("Importando grupos desde CSV...");
+      await repository.importGroupsFromCsv(courseId, csvString);
+      print("Grupos importados exitosamente");
+      if (Get.context != null) {
+        ScaffoldMessenger.of(Get.context!).showSnackBar(
+          const SnackBar(content: Text('¡Grupos importados exitosamente!'), backgroundColor: Colors.green),
+        );
+      }
+    } catch (e) {
+      if (Get.context != null) {
+        ScaffoldMessenger.of(Get.context!).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}'), backgroundColor: Colors.redAccent),
+        );
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
 }

@@ -133,8 +133,7 @@ class CourseRemoteSourceService implements ICourseRemoteSource {
     }).toList();
   }
 
-  /// 🔥 CREAR CURSO
-  /// 🔥 CREAR CURSO
+ 
   @override
   Future<Map<String, dynamic>> createCourse(
     String id,
