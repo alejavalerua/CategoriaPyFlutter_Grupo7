@@ -21,6 +21,7 @@ import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/ui/views/login_page.dart';
 import 'features/auth/ui/views/signup_page.dart';
 import 'features/student/ui/views/home_page.dart';
+import 'features/teacher/ui/views/home_page.dart';
 
 void main() {
   Loggy.initLoggy(logPrinter: const PrettyPrinter(showColors: true));
@@ -70,7 +71,8 @@ class MyApp extends StatelessWidget {
           curve: Curves.easeInOut,
           opaque: true,
         ),
-        GetPage(name: '/home', page: () => const HomePage()),
+        GetPage(name: '/homeStudent', page: () => const HomePageSt()),
+        GetPage(name: '/homeTeacher', page: () => const HomePageTe()),
       ],
     );
   }

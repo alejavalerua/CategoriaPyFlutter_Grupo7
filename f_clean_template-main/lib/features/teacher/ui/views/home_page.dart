@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:peer_sync/core/widgets/navbar.dart';
 import 'package:peer_sync/core/themes/app_theme.dart';
-import 'package:peer_sync/core/widgets/add_course_modal.dart';
-import 'student_home_page.dart';
-import 'student_courses_page.dart';
-import 'student_profile_page.dart';
+import 'package:peer_sync/core/widgets/create_course_modal.dart';
+import 'teacher_home_page.dart';
+import 'teacher_courses_page.dart';
+import 'teacher_profile_page.dart';
 
-class HomePageSt extends StatefulWidget {
-  const HomePageSt({super.key});
+class HomePageTe extends StatefulWidget {
+  const HomePageTe({super.key});
 
   @override
-  State<HomePageSt> createState() => _HomePageState();
+  State<HomePageTe> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePageSt> {
+class _HomePageState extends State<HomePageTe> {
   int currentIndex = 1;
 
   final List<Widget> pages = const [
-    StudentCoursesPage(),
-    StudentHomePage(),
-    StudentProfilePage(),
+    TeacherCoursesPage(),
+    TeacherHomePage(),
+    TeacherProfilePage(),
   ];
 
-  void openAddCourseModal() {
-    final TextEditingController codeController = TextEditingController();
+  void openCreateCourseModal() {
+    final TextEditingController nameController = TextEditingController();
 
     showDialog(
       context: context,
@@ -33,16 +33,18 @@ class _HomePageState extends State<HomePageSt> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           child: Center(
-            child: AddCourseModal(
-              codeController: codeController,
+            child: CreateCourseModal(
+              nameController: nameController,
               onCancel: () {
                 Navigator.pop(context);
               },
-              onAdd: () {
-                print("Código ingresado: ${codeController.text}");
+              onCreate: () {
+                print("Nombre del curso: ${nameController.text}");
                 Navigator.pop(context);
               },
-              
+              onCsvSelected: (file) {
+                print("CSV seleccionado: ${file?.name}");
+              },
             ),
           ),
         );
@@ -57,7 +59,7 @@ class _HomePageState extends State<HomePageSt> {
       backgroundColor: AppTheme.backgroundColor,
       floatingActionButton: currentIndex == 0
           ? FloatingActionButton(
-              onPressed: openAddCourseModal,
+              onPressed: openCreateCourseModal,
               backgroundColor: AppTheme.secondaryColor,
               child: const Icon(Icons.add),
             )
