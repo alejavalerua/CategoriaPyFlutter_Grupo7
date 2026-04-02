@@ -158,7 +158,6 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                 children: [
                   Align(
                     alignment: Alignment.center,
-                    
                     child: GestureDetector(
                       onTap: () {
                         // Navegación a la vista de detalle que hicimos antes

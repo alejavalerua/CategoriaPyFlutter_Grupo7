@@ -10,4 +10,7 @@ abstract class IEvaluationRepository {
     required DateTime endDate,
     required bool visibility,
   });
+
+  Future<List<Activity>> getActivitiesByCategory(String categoryId);
+  
 }

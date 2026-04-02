@@ -47,4 +47,29 @@ class EvaluationRemoteSource implements IEvaluationRemoteSource {
       throw Exception('Error al crear la actividad: ${res.body}');
     }
   }
+
+  @override
+  Future<List<dynamic>> getActivitiesByCategory(String categoryId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('tokenA');
+    if (token == null) throw Exception('No hay sesión activa.');
+
+    final uri = Uri.parse('$dbUrl/read').replace(queryParameters: {
+      'tableName': 'Activity',
+      'category_id': categoryId,
+    });
+
+    final res = await httpClient.get(uri, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    if (res.statusCode == 200) {
+      final data = jsonDecode(res.body);
+      return data is List ? data : (data['data'] ?? data['records'] ?? []);
+    } else {
+      throw Exception('Error al obtener actividades: ${res.body}');
+    }
+  }
+  
 }

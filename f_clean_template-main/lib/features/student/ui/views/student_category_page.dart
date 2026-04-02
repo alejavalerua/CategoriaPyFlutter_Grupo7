@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:peer_sync/core/themes/app_theme.dart';
 import 'package:peer_sync/core/widgets/category_card.dart';
 import 'package:peer_sync/features/category/ui/viewmodels/category_controller.dart';
+import 'package:peer_sync/features/evaluation/ui/views/student_activities_page.dart';
 
 class CourseDetailPage extends StatefulWidget {
   final String courseId;
@@ -89,12 +90,21 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                 children: [
                   Align(
                     alignment: Alignment.center,
-                    child: ProjectCategoryCard(
-                      title: item.name,
-                      subtitle: "Grupo",
-                      leadingIcon: Icons.group,
+                    child: GestureDetector(
+                      onTap: () {
+                        // Navegación a la vista de detalle que hicimos antes
+                        Get.to(() => StudentActivitiesPage(
+                          categoryId: item.id, 
+                          categoryName: item.name,
+                        ));
+                      },
+                      child: ProjectCategoryCard(
+                        title: item.name,
+                        subtitle: "Grupo",
+                        leadingIcon: Icons.group,
+                      ),
                     ),
-                  ),
+                  ),                  
                   const SizedBox(height: 14),
                 ],
               );

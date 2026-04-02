@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:peer_sync/features/evaluation/domain/models/activity.dart';
 import '../../domain/repositories/i_evaluation_repository.dart';
 
 class EvaluationController extends GetxController {
@@ -22,6 +23,9 @@ class EvaluationController extends GetxController {
   final endTime = Rxn<TimeOfDay>();
 
   final isVisible = true.obs;
+
+  final activities = <Activity>[].obs;
+  final isLoadingActivities = false.obs;
 
   EvaluationController(this.repository);
 
@@ -153,4 +157,25 @@ class EvaluationController extends GetxController {
       endTimeController.text = picked.format(context);
     }
   }
+
+Future<void> loadActivities(String categoryId) async {
+    try {
+      isLoadingActivities.value = true;
+      
+      final result = await repository.getActivitiesByCategory(categoryId);
+      
+      // Filtramos SOLO las que el profesor marcó como "visibles"
+      final visibleActivities = result.where((act) => act.visibility == true).toList();
+      
+      // Actualizamos la lista reactiva
+      activities.assignAll(visibleActivities);
+      
+    } catch (e) {
+      Get.snackbar('Error', 'No se pudieron cargar las actividades: $e', 
+        backgroundColor: Colors.redAccent, colorText: Colors.white);
+    } finally {
+      isLoadingActivities.value = false;
+    }
+  }
+
 }
