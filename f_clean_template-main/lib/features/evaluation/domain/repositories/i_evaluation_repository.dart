@@ -12,5 +12,10 @@ abstract class IEvaluationRepository {
   });
 
   Future<List<Activity>> getActivitiesByCategory(String categoryId);
+  Future<List<dynamic>> getPeers(String categoryId, String studentEmail);
+  Future<List<dynamic>> getCriteria(String activityId);
+  Future<Map<String, Map<String, double>>> getMyEvaluations(String activityId, String myEmail);
+  Future<void> submitEvaluation(String activityId, String categoryId, String evaluatorEmail, String evaluatedEmail, String comments, Map<String, double> scores);
+  Future<Map<String, double>> getMyAverageResults(String activityId, String myEmail);
   
 }
