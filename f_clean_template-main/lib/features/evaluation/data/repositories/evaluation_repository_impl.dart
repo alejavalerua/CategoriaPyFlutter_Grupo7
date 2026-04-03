@@ -1,3 +1,7 @@
+import 'package:peer_sync/features/evaluation/domain/models/activity.dart';
+import 'package:peer_sync/features/evaluation/domain/models/criteria.dart';
+import 'package:peer_sync/features/evaluation/domain/models/peer.dart';
+
 import '../../domain/repositories/i_evaluation_repository.dart';
 import '../datasources/remote/i_evaluation_remote_source.dart';
 
@@ -25,5 +29,91 @@ class EvaluationRepositoryImpl implements IEvaluationRepository {
       endDate,
       visibility,
     );
+  }
+
+  @override
+  Future<List<Activity>> getActivitiesByCategory(String categoryId) async {
+    final rawData = await _remoteSource.getActivitiesByCategory(categoryId);
+
+    // Mapeamos la lista de JSONs a una lista de objetos Activity puros
+    return rawData.map((json) {
+      return Activity(
+        id: json['_id'].toString(),
+        categoryId: json['category_id'].toString(),
+        name: json['name'].toString(),
+        description: json['description']?.toString(),
+        // Parseamos el string ISO-8601 a DateTime y lo pasamos a la hora local del celular
+        startDate: DateTime.parse(json['start_date'].toString()).toLocal(),
+        endDate: DateTime.parse(json['end_date'].toString()).toLocal(),
+        // Si visibility viene nulo, asumimos que es falso
+        visibility: json['visibility'] ?? false,
+      );
+    }).toList();
+  }
+
+  @override
+  Future<List<Peer>> getPeers(String categoryId, String studentEmail) async {
+    final data = await _remoteSource.getPeers(categoryId, studentEmail);
+    return data
+        .map(
+          (j) => Peer(
+            email: j['email'].toString(),
+            firstName: j['first_name'].toString(),
+            lastName: j['last_name'].toString(),
+          ),
+        )
+        .toList();
+  }
+
+  @override
+  Future<List<Criteria>> getCriteria(String activityId) async {
+    final data = await _remoteSource.getCriteria(activityId);
+    return data
+        .map(
+          (j) => Criteria(
+            id: j['_id'].toString(),
+            activityId: j['activity_id'].toString(),
+            name: j['name'].toString(),
+            description: j['description']?.toString(),
+            maxScore: double.tryParse(j['max_score'].toString()) ?? 5.0,
+          ),
+        )
+        .toList();
+  }
+
+  @override
+  Future<Map<String, Map<String, double>>> getMyEvaluations(
+    String activityId,
+    String myEmail,
+  ) async {
+    return await _remoteSource.getMyEvaluations(activityId, myEmail);
+  }
+
+  @override
+  Future<void> submitEvaluation(
+    String activityId,
+    String categoryId,
+    String evaluatorEmail,
+    String evaluatedEmail,
+    String comments,
+    Map<String, double> scores,
+  ) async {
+    await _remoteSource.submitEvaluation(
+      activityId,
+      categoryId,
+      evaluatorEmail,
+      evaluatedEmail,
+      comments,
+      scores,
+    );
+  }
+
+  @override
+  Future<Map<String, double>> getMyAverageResults(
+    String activityId,
+    String myEmail,
+  ) async {
+    // Simplemente le pasa la pelota al Data Source
+    return await _remoteSource.getMyAverageResults(activityId, myEmail);
   }
 }
