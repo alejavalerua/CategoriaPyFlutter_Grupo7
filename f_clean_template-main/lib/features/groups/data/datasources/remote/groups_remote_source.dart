@@ -52,7 +52,6 @@ class GroupsRemoteSource implements IGroupsRemoteSource {
       throw Exception('Error al insertar en $tableName: ${res.body}');
     } else {
       print('respuesta exitosa al insertar en $tableName: ${res.body}');
-      
     }
   }
 

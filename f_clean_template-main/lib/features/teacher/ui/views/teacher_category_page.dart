@@ -7,6 +7,8 @@ import 'package:peer_sync/core/widgets/category_card.dart';
 import 'package:peer_sync/core/widgets/create_category_modal.dart';
 import 'package:peer_sync/core/widgets/navbar.dart';
 import 'package:peer_sync/features/category/ui/viewmodels/category_controller.dart';
+import 'package:peer_sync/features/category/ui/views/category_detail_page.dart';
+import 'package:peer_sync/features/evaluation/ui/views/create_activity_page.dart';
 import 'package:peer_sync/features/groups/ui/viewmodels/groups_controller.dart';
 
 import 'teacher_home_page.dart';
@@ -262,12 +264,21 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                 children: [
                   Align(
                     alignment: Alignment.center,
-                    child: ProjectCategoryCard(
-                      title: item.name,
-                      subtitle: "Grupo",
-                      leadingIcon: Icons.group,
+                    child: GestureDetector(
+                      onTap: () {
+                        // Navegación a la vista de detalle que hicimos antes
+                        Get.to(() => CategoryDetailPage(
+                          categoryId: item.id, 
+                          categoryName: item.name,
+                        ));
+                      },
+                      child: ProjectCategoryCard(
+                        title: item.name,
+                        subtitle: "Grupo",
+                        leadingIcon: Icons.group,
+                      ),
                     ),
-                  ),
+                  ),                  
                   const SizedBox(height: 14),
                 ],
               );
