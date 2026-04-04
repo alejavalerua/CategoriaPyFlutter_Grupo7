@@ -61,16 +61,21 @@ class TeacherHomePage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            EvaluationCard(),
-
-            const SizedBox(height: 20),
-
-            ActivitiesSection(),
-
-            const SizedBox(height: 30),
-
-            CoursesSection(),
-
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: Center(
+                child: Text(
+                  "Actualmente no hay nada para mostrar",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.secondaryColor,
+                  ),
+                ),
+              ),
+            ),
+            
             const SizedBox(height: 30),
           ],
         ),
