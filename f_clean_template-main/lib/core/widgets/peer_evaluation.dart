@@ -318,7 +318,7 @@ class _EditableEvaluationRow extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Container(
-          width: 86,
+          width: 100,
           height: 40,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(

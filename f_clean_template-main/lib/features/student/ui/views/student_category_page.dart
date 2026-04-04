@@ -27,7 +27,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     super.initState();
 
     /// 🔥 MISMA LÓGICA QUE TEACHER
-    controller.loadCategories(widget.courseId);
+    controller.loadCategoriesByStudent(widget.courseId);
   }
 
   @override

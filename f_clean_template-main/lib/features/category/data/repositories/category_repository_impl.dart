@@ -12,11 +12,22 @@ class CategoryRepositoryImpl implements ICategoryRepository {
     final data = await remote.getCategoriesByCourse(courseId);
 
     return data
-        .map((e) => Category(
-              id: e["id"],
-              name: e["name"],
-              courseId: e["course_id"],
-            ))
+        .map(
+          (e) =>
+              Category(id: e["id"], name: e["name"], courseId: e["course_id"]),
+        )
+        .toList();
+  }
+
+  @override
+  Future<List<Category>> getCategoriesByStudent(String courseId) async {
+    final data = await remote.getCategoriesByStudent(courseId);
+
+    return data
+        .map(
+          (e) =>
+              Category(id: e["id"], name: e["name"], courseId: e["course_id"]),
+        )
         .toList();
   }
 }

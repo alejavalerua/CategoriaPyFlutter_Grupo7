@@ -85,7 +85,7 @@ class StudentCoursesPage extends StatelessWidget {
                   /// 🔥 CARGAR SI NO EXISTEN
                   if (categories.isEmpty) {
                     categoryController
-                        .loadCategoriesForCourseCard(course.id);
+                        .loadCategoriesForCourseCardByStudent(course.id);
                   }
 
                   return Padding(

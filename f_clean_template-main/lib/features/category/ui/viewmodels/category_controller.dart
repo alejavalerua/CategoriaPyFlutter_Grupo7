@@ -45,6 +45,38 @@ class CategoryController extends GetxController {
     }
   }
 
+  Future<void> loadCategoriesByStudent(String courseId) async {
+    try {
+      print("🎓 Cargando categorías SOLO del estudiante");
+
+      isLoading.value = true;
+
+      final response = await repository.getCategoriesByStudent(courseId);
+
+      print("📦 Categorías filtradas: $response");
+
+      categories.assignAll(response);
+    } catch (e) {
+      print("❌ ERROR: $e");
+      _showError(e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> loadCategoriesForCourseCardByStudent(String courseId) async {
+    try {
+      /// 🚫 evitar repetir llamadas
+      if (categoriesByCourse.containsKey(courseId)) return;
+
+      final response = await repository.getCategoriesByStudent(courseId);
+
+      categoriesByCourse[courseId] = response;
+    } catch (e) {
+      print("❌ Error cargando preview estudiante: $e");
+    }
+  }
+
   /// 🔥 NUEVO: OBTENER PREVIEW
   List<Category> getCategoriesPreview(String courseId) {
     return categoriesByCourse[courseId] ?? [];
