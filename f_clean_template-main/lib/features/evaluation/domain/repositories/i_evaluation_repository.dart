@@ -1,3 +1,5 @@
+import 'package:peer_sync/features/evaluation/domain/models/activity_report.dart';
+
 import '../models/activity.dart';
 
 abstract class IEvaluationRepository {
@@ -17,5 +19,5 @@ abstract class IEvaluationRepository {
   Future<Map<String, Map<String, double>>> getMyEvaluations(String activityId, String myEmail);
   Future<void> submitEvaluation(String activityId, String categoryId, String evaluatorEmail, String evaluatedEmail, String comments, Map<String, double> scores);
   Future<Map<String, double>> getMyAverageResults(String activityId, String myEmail);
-  
+  Future<List<GroupReport>> getActivityReport(String activityId, String categoryId);
 }

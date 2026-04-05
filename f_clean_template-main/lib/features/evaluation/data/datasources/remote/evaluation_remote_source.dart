@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'i_evaluation_remote_source.dart';
+import '../../../domain/models/activity_report.dart';
 
 class EvaluationRemoteSource implements IEvaluationRemoteSource {
   final http.Client httpClient;
@@ -286,6 +287,69 @@ class EvaluationRemoteSource implements IEvaluationRemoteSource {
     averages['general_score'] = genSum / generalScores.length;
 
     return averages;
+  }
+
+  Future<List<GroupReport>> getActivityReport(String activityId, String categoryId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('tokenA');
+    final headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
+
+    // 1. Traemos TODAS las evaluaciones de esta actividad de un solo golpe
+    final allEvaluations = await _readTable('Evaluation', {'activity_id': activityId}, headers);
+
+    // 2. Traemos TODOS los grupos de esta categoría
+    final groups = await _readTable('Group', {'category_id': categoryId}, headers);
+
+    List<GroupReport> report = [];
+
+    // 3. Iteramos grupo por grupo
+    for (var g in groups) {
+      final groupId = g['_id'].toString();
+      final groupName = g['group_name'].toString();
+
+      // Buscamos los miembros de este grupo específico
+      final members = await _readTable('GroupMember', {'group_id': groupId}, headers);
+      final int expectedEvaluationsPerStudent = members.length > 1 ? members.length - 1 : 0;
+
+      List<StudentReport> studentReports = [];
+
+      // 4. Analizamos las notas y el estado de cada miembro
+      for (var m in members) {
+        final email = m['email'].toString();
+
+        // Filtramos las evaluaciones que ÉL hizo
+        final given = allEvaluations.where((e) => e['evaluator_id'] == email).toList();
+        
+        // Filtramos las evaluaciones que le hicieron A ÉL
+        final received = allEvaluations.where((e) => e['evaluated_id'] == email).toList();
+
+        // Calculamos su nota promedio final
+        double sum = 0;
+        for (var r in received) {
+          sum += double.tryParse(r['general_score'].toString()) ?? 0.0;
+        }
+        final finalGrade = received.isEmpty ? 0.0 : (sum / received.length);
+
+        studentReports.add(StudentReport(
+          email: email,
+          firstName: m['first_name'].toString(),
+          lastName: m['last_name'].toString(),
+          evaluationsGiven: given.length,
+          evaluationsReceived: received.length,
+          finalGrade: finalGrade,
+          isComplete: given.length >= expectedEvaluationsPerStudent, // True si ya calificó al resto
+        ));
+      }
+
+      // Agregamos el grupo al reporte final
+      report.add(GroupReport(
+        groupId: groupId,
+        groupName: groupName,
+        students: studentReports,
+      ));
+    }
+
+    return report;
   }
 
 }
