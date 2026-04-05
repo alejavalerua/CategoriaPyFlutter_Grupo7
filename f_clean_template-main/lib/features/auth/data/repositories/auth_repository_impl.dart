@@ -143,4 +143,10 @@ class AuthRepositoryImpl implements IAuthRepository {
     await prefs.remove('role');
     await prefs.remove('name');
   }
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {
+    await _dataSource.sendPasswordResetEmail(email);
+  }
+  
 }

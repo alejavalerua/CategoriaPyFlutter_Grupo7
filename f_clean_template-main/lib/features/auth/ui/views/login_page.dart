@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:peer_sync/features/auth/ui/viewmodels/auth_controller.dart';
 import 'package:peer_sync/core/themes/app_theme.dart';
+import 'package:peer_sync/features/auth/ui/views/forgot_password_page.dart';
 
 import '../../../../core/widgets/auth_logo.dart';
 import '../../../../core/widgets/auth_input_container.dart';
@@ -99,7 +100,9 @@ class LoginPage extends GetView<AuthController> {
               const SizedBox(height: 20),
 
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.to(() => const ForgotPasswordPage());
+                },
                 child: const Text(
                   "¿Olvidaste tu contraseña?",
                   style: TextStyle(color: Color.fromARGB(137, 21, 20, 20)),

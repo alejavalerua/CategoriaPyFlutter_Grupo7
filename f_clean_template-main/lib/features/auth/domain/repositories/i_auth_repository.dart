@@ -6,4 +6,5 @@ abstract class IAuthRepository {
   Future<AuthUser?> getSavedUser(); // Busca si hay sesión guardada
   Future<void> clearUser();
   Future<T> safeRequest<T>(Future<T> Function() request);
+  Future<void> sendPasswordResetEmail(String email);
 }
