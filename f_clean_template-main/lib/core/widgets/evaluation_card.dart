@@ -11,11 +11,9 @@ class PeerEvaluationData {
 class PeerEvaluationCard extends StatefulWidget {
   final String studentName;
   final String progressText;
-  final double progress;
   final bool initiallyExpanded;
   final IconData leadingIcon;
   final double width;
-
   final PeerEvaluationData puntualidad;
   final PeerEvaluationData contribucion;
   final PeerEvaluationData compromiso;
@@ -26,14 +24,13 @@ class PeerEvaluationCard extends StatefulWidget {
     super.key,
     required this.studentName,
     required this.progressText,
-    required this.progress,
     required this.puntualidad,
     required this.contribucion,
     required this.compromiso,
     required this.actitud,
     required this.general,
     this.initiallyExpanded = false,
-    this.leadingIcon = Icons.south_rounded,
+    this.leadingIcon = Icons.person_sharp,
     this.width = 330,
   });
 
@@ -112,18 +109,6 @@ class _PeerEvaluationCardState extends State<PeerEvaluationCard> {
                       widget.progressText,
                       style: AppTheme.bodyS.copyWith(
                         color: AppTheme.grayColor100,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: LinearProgressIndicator(
-                        value: widget.progress.clamp(0.0, 1.0),
-                        minHeight: 4,
-                        backgroundColor: AppTheme.grayColor100,
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          AppTheme.secondaryColor100,
-                        ),
                       ),
                     ),
                   ],

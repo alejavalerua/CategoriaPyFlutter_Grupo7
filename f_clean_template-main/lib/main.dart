@@ -49,7 +49,7 @@ void main() {
   Get.put<IEvaluationRemoteSource>(EvaluationRemoteSource());
   Get.put<IEvaluationRepository>(EvaluationRepositoryImpl(Get.find()));
   Get.put<EvaluationController>(EvaluationController(Get.find()));
-  
+
   runApp(const MyApp());
 }
 

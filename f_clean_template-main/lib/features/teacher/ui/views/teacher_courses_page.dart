@@ -78,15 +78,14 @@ class TeacherCoursesPage extends StatelessWidget {
               /// ✅ LISTA DE CURSOS
               return Column(
                 children: controller.courses.map((course) {
-
                   /// 🔥 OBTENER CATEGORÍAS
-                  final categories =
-                      categoryController.getCategoriesPreview(course.id);
+                  final categories = categoryController.getCategoriesPreview(
+                    course.id,
+                  );
 
                   /// 🔥 CARGAR SI NO EXISTEN
                   if (categories.isEmpty) {
-                    categoryController
-                        .loadCategoriesForCourseCard(course.id);
+                    categoryController.loadCategoriesForCourseCard(course.id);
                   }
 
                   return Padding(
@@ -94,7 +93,6 @@ class TeacherCoursesPage extends StatelessWidget {
                     child: CourseCard(
                       title: course.name,
                       progressText: "0 de 0 actividades",
-                      progress: 0.0,
                       leadingIcon: Icons.phone_android,
 
                       /// 🔥 MOSTRAR SOLO 3 CATEGORÍAS

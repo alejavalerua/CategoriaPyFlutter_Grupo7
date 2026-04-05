@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:peer_sync/core/themes/app_theme.dart';
-import '../viewmodels/evaluation_form_controller.dart';
-
-// Importamos los widgets de tu compañera (Ajusta las rutas si están en otra carpeta)
 import 'package:peer_sync/core/widgets/evaluation_card.dart';
+import 'package:peer_sync/core/widgets/navbar.dart';
 import 'package:peer_sync/core/widgets/peer_evaluation.dart';
+import 'package:peer_sync/features/category/ui/bindings/category_binding.dart';
+import 'package:peer_sync/features/category/ui/viewmodels/category_controller.dart';
+import 'package:peer_sync/features/course/ui/bindings/course_binding.dart';
+import 'package:peer_sync/features/course/ui/viewmodels/course_controller.dart';
+import 'package:peer_sync/features/student/ui/views/student_courses_page.dart';
+import 'package:peer_sync/features/student/ui/views/student_home_page.dart';
+import 'package:peer_sync/features/student/ui/views/student_profile_page.dart';
+import '../viewmodels/evaluation_form_controller.dart';
 
 class StudentEvaluationPage extends StatefulWidget {
   final String activityId;
@@ -38,6 +44,61 @@ class _StudentEvaluationPageState extends State<StudentEvaluationPage> {
     });
   }
 
+  String toTitleCase(String text) {
+    return text
+        .toLowerCase()
+        .split(' ')
+        .where((word) => word.trim().isNotEmpty)
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
+  }
+
+  void _ensureStudentCourseDependencies() {
+    if (!Get.isRegistered<dynamic>(tag: 'student_courses_binding_marker')) {
+      CourseBinding().dependencies();
+      CategoryBinding().dependencies();
+      Get.put<Object>(Object(), tag: 'student_courses_binding_marker');
+    } else {
+      if (!Get.isRegistered<CourseController>()) {
+        CourseBinding().dependencies();
+      }
+      if (!Get.isRegistered<CategoryController>()) {
+        CategoryBinding().dependencies();
+      }
+    }
+  }
+
+  void _handleNavTap(int index) {
+    _ensureStudentCourseDependencies();
+
+    if (index == 0) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const _StudentCoursesShell()),
+        (route) => false,
+      );
+      return;
+    }
+
+    if (index == 1) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const _StudentHomeShell()),
+        (route) => false,
+      );
+      return;
+    }
+
+    if (index == 2) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const _StudentProfileShell()),
+        (route) => false,
+      );
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +121,6 @@ class _StudentEvaluationPageState extends State<StudentEvaluationPage> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        // Filtramos quién soy yo y quiénes son mis compañeros
         final myPeerData = controller.peers.firstWhereOrNull(
           (p) => p.email == controller.myEmail,
         );
@@ -73,54 +133,82 @@ class _StudentEvaluationPageState extends State<StudentEvaluationPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ==========================================
-              // SECCIÓN: MIS RESULTADOS (Solo lectura)
-              // ==========================================
-              Text("Mis resultados", style: AppTheme.h3.copyWith(color: AppTheme.textColor, fontSize: 20)),
+              Text(
+                "Mis resultados",
+                style: AppTheme.h3.copyWith(
+                  color: AppTheme.textColor,
+                  fontSize: 20,
+                ),
+              ),
               const SizedBox(height: 16),
-              
+
               if (myPeerData != null) ...[
                 Builder(
                   builder: (context) {
-                    // Función para extraer la nota por nombre (A prueba de tildes)
                     String getMyScoreText(String criteriaName) {
                       if (controller.myAverageResults.isEmpty) return "0.0";
-                      
-                      final normalizedTarget = criteriaName.toLowerCase().replaceAll('ó', 'o');
-                      final matchedCriteria = controller.criteriaList.firstWhereOrNull((c) {
-                        return c.name.toLowerCase().replaceAll('ó', 'o') == normalizedTarget;
-                      });
-                      
-                      if (matchedCriteria != null && controller.myAverageResults.containsKey(matchedCriteria.id)) {
-                        return controller.myAverageResults[matchedCriteria.id]!.toStringAsFixed(1);
+
+                      final normalizedTarget = criteriaName
+                          .toLowerCase()
+                          .replaceAll('ó', 'o');
+
+                      final matchedCriteria = controller.criteriaList
+                          .firstWhereOrNull((c) {
+                            return c.name.toLowerCase().replaceAll('ó', 'o') ==
+                                normalizedTarget;
+                          });
+
+                      if (matchedCriteria != null &&
+                          controller.myAverageResults.containsKey(
+                            matchedCriteria.id,
+                          )) {
+                        return controller.myAverageResults[matchedCriteria.id]!
+                            .toStringAsFixed(1);
                       }
                       return "0.0";
                     }
 
-                    // Extraemos la nota general y calculamos el porcentaje para la barra (sobre 5.0)
-                    final myGeneralScore = controller.myAverageResults['general_score']?.toStringAsFixed(1) ?? "0.0";
-                    final myGeneralProgress = (double.tryParse(myGeneralScore) ?? 0.0) / 5.0;
+                    final myGeneralScore =
+                        controller.myAverageResults['general_score']
+                            ?.toStringAsFixed(1) ??
+                        "0.0";
 
                     return PeerEvaluationCard(
                       width: double.infinity,
-                      studentName: "${myPeerData.firstName} ${myPeerData.lastName}",
-                      progressText: controller.myAverageResults.isEmpty ? "Aún no te han evaluado" : "Promedio actual",
-                      progress: myGeneralProgress, // Barra dinámica
+                      studentName: toTitleCase(
+                        "${myPeerData.firstName} ${myPeerData.lastName}",
+                      ),
+                      progressText: controller.myAverageResults.isEmpty
+                          ? "Aún no te han evaluado"
+                          : "Promedio actual",
                       initiallyExpanded: false,
-                      puntualidad: PeerEvaluationData(subtitle: "Promedio", score: getMyScoreText("Puntualidad")),
-                      contribucion: PeerEvaluationData(subtitle: "Promedio", score: getMyScoreText("Contribución")),
-                      compromiso: PeerEvaluationData(subtitle: "Promedio", score: getMyScoreText("Compromiso")),
-                      actitud: PeerEvaluationData(subtitle: "Promedio", score: getMyScoreText("Actitud")),
-                      general: PeerEvaluationData(subtitle: "Nota Final", score: myGeneralScore),
+                      puntualidad: PeerEvaluationData(
+                        subtitle: "Promedio",
+                        score: getMyScoreText("Puntualidad"),
+                      ),
+                      contribucion: PeerEvaluationData(
+                        subtitle: "Promedio",
+                        score: getMyScoreText("Contribución"),
+                      ),
+                      compromiso: PeerEvaluationData(
+                        subtitle: "Promedio",
+                        score: getMyScoreText("Compromiso"),
+                      ),
+                      actitud: PeerEvaluationData(
+                        subtitle: "Promedio",
+                        score: getMyScoreText("Actitud"),
+                      ),
+                      general: PeerEvaluationData(
+                        subtitle: "Nota Final",
+                        score: myGeneralScore,
+                      ),
                     );
-                  }
-                )
+                  },
+                ),
               ],
+
               const SizedBox(height: 35),
 
-              // ==========================================
-              // SECCIÓN: EVALUACIONES A COMPAÑEROS
-              // ==========================================
               Text(
                 "Evaluaciones",
                 style: AppTheme.h3.copyWith(
@@ -133,16 +221,14 @@ class _StudentEvaluationPageState extends State<StudentEvaluationPage> {
               if (otherPeers.isEmpty)
                 const Text("No hay más compañeros en tu grupo para evaluar."),
 
-              // Iteramos sobre el resto de compañeros usando el widget Editable
               ...otherPeers.map((peer) {
-                // Verificamos si este compañero ya fue evaluado en la BD
                 final isAlreadyEvaluated = controller.completedEvaluations
                     .containsKey(peer.email);
                 final savedScores = isAlreadyEvaluated
                     ? controller.completedEvaluations[peer.email]!
                     : <String, double>{};
                 final isReadOnly = isAlreadyEvaluated || widget.isExpired;
-                // Función auxiliar para extraer la nota guardada por nombre del criterio
+
                 double? getSavedScore(String criteriaName) {
                   if (!isAlreadyEvaluated) return null;
                   final criteriaObj = controller.criteriaList.firstWhereOrNull(
@@ -152,61 +238,101 @@ class _StudentEvaluationPageState extends State<StudentEvaluationPage> {
                       ? savedScores[criteriaObj.id]
                       : null;
                 }
-                // Definimos los textos visuales
+
                 String progressTextStr;
                 if (isAlreadyEvaluated) {
-                  progressTextStr = "Evaluación Completada";
+                  progressTextStr = "Completado";
                 } else if (widget.isExpired) {
-                  progressTextStr = "No evaluado (Actividad Cerrada)";
+                  progressTextStr = "No evaluado";
                 } else {
-                  progressTextStr = "Pendiente por evaluar";
+                  progressTextStr = "Pendiente";
                 }
 
+                final isThisPeerSubmitting = controller.isPeerSubmitting(
+                  peer.email,
+                );
+
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.only(bottom: 32),
                   child: Column(
                     children: [
                       EditablePeerEvaluationCard(
                         width: double.infinity,
-                        studentName: "${peer.firstName} ${peer.lastName}",
+                        studentName: toTitleCase(
+                          "${peer.firstName} ${peer.lastName}",
+                        ),
                         progressText: progressTextStr,
-                        progress: isAlreadyEvaluated ? 1.0 : 0.0,
                         initiallyExpanded: false,
-                        
-                        // Cargamos los datos históricos (si existen)
                         initialPuntualidad: getSavedScore("Puntualidad"),
                         initialContribucion: getSavedScore("Contribución"),
                         initialCompromiso: getSavedScore("Compromiso"),
                         initialActitud: getSavedScore("Actitud"),
-
                         onScoresChanged: (scores) {
-                          // Solo permitimos actualizar si no ha sido evaluado
                           if (!isAlreadyEvaluated) {
                             controller.updateScoreForPeer(peer.email, scores);
                           } else {
-                            Get.snackbar('Aviso', 'Ya calificaste a este compañero. Las notas son de solo lectura.', 
-                                backgroundColor: Colors.blue, colorText: Colors.white);
+                            Get.snackbar(
+                              'Aviso',
+                              'Ya calificaste a este compañero. Las notas son de solo lectura.',
+                              backgroundColor: Colors.blue,
+                              colorText: Colors.white,
+                            );
                           }
                         },
                       ),
-                      const SizedBox(height: 8),
-                      
-                      // Ocultamos el botón de Guardar si ya lo evaluamos
+
                       if (!isReadOnly)
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton.icon(
-                            onPressed: controller.isSubmitting.value 
-                              ? null 
-                              : () => controller.submitEvaluationForPeer(widget.activityId, widget.categoryId, peer.email),
-                            icon: const Icon(Icons.save_rounded, color: AppTheme.primaryColor, size: 18),
-                            label: const Text("Guardar Evaluación", style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold)),
-                            style: TextButton.styleFrom(
-                              backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: isThisPeerSubmitting
+                                  ? null
+                                  : () => controller.submitEvaluationForPeer(
+                                      widget.activityId,
+                                      widget.categoryId,
+                                      peer.email,
+                                    ),
+                              icon: isThisPeerSubmitting
+                                  ? const SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Icon(
+                                      Icons.save_rounded,
+                                      size: 18,
+                                      color: Colors.white,
+                                    ),
+                              label: Text(
+                                isThisPeerSubmitting
+                                    ? "Guardando..."
+                                    : "Guardar evaluación",
+                                style: AppTheme.buttonM.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.primaryColor200,
+                                disabledBackgroundColor: AppTheme.grayColor100
+                                    .withOpacity(0.65),
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 18,
+                                  vertical: 14,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
                             ),
                           ),
-                        )
+                        ),
                     ],
                   ),
                 );
@@ -217,6 +343,120 @@ class _StudentEvaluationPageState extends State<StudentEvaluationPage> {
           ),
         );
       }),
+      bottomNavigationBar: NavBar(currentIndex: 0, onTap: _handleNavTap),
+    );
+  }
+}
+
+class _StudentCoursesShell extends StatelessWidget {
+  const _StudentCoursesShell();
+
+  void _ensureBindings() {
+    if (!Get.isRegistered<dynamic>(tag: 'student_courses_binding_marker')) {
+      CourseBinding().dependencies();
+      CategoryBinding().dependencies();
+      Get.put<Object>(Object(), tag: 'student_courses_binding_marker');
+    } else {
+      if (!Get.isRegistered<CourseController>()) {
+        CourseBinding().dependencies();
+      }
+      if (!Get.isRegistered<CategoryController>()) {
+        CategoryBinding().dependencies();
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _ensureBindings();
+
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
+      body: const StudentCoursesPage(),
+      bottomNavigationBar: NavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          if (index == 0) return;
+          if (index == 1) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const _StudentHomeShell()),
+              (route) => false,
+            );
+          }
+          if (index == 2) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const _StudentProfileShell()),
+              (route) => false,
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class _StudentHomeShell extends StatelessWidget {
+  const _StudentHomeShell();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
+      body: const StudentHomePage(),
+      bottomNavigationBar: NavBar(
+        currentIndex: 1,
+        onTap: (index) {
+          if (index == 1) return;
+          if (index == 0) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const _StudentCoursesShell()),
+              (route) => false,
+            );
+          }
+          if (index == 2) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const _StudentProfileShell()),
+              (route) => false,
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+class _StudentProfileShell extends StatelessWidget {
+  const _StudentProfileShell();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
+      body: const StudentProfilePage(),
+      bottomNavigationBar: NavBar(
+        currentIndex: 2,
+        onTap: (index) {
+          if (index == 2) return;
+          if (index == 0) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const _StudentCoursesShell()),
+              (route) => false,
+            );
+          }
+          if (index == 1) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const _StudentHomeShell()),
+              (route) => false,
+            );
+          }
+        },
+      ),
     );
   }
 }

@@ -5,7 +5,7 @@ class CourseProjectItem {
   final String title;
   final String subtitle;
   final Function(BuildContext context, String courseTitle, String projectTitle)?
-      onTap;
+  onTap;
 
   const CourseProjectItem({
     required this.title,
@@ -17,7 +17,6 @@ class CourseProjectItem {
 class CourseCard extends StatefulWidget {
   final String title;
   final String progressText;
-  final double progress;
   final List<CourseProjectItem> projects;
   final bool initiallyExpanded;
   final IconData leadingIcon;
@@ -28,7 +27,6 @@ class CourseCard extends StatefulWidget {
     super.key,
     required this.title,
     required this.progressText,
-    required this.progress,
     required this.projects,
     this.initiallyExpanded = false,
     this.leadingIcon = Icons.api_rounded,
@@ -43,13 +41,26 @@ class CourseCard extends StatefulWidget {
 class _CourseCardState extends State<CourseCard> {
   late bool _isExpanded;
 
+  bool get _hasProjects => widget.projects.isNotEmpty;
+
   @override
   void initState() {
     super.initState();
-    _isExpanded = widget.initiallyExpanded;
+    _isExpanded = widget.initiallyExpanded && _hasProjects;
+  }
+
+  @override
+  void didUpdateWidget(covariant CourseCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (!_hasProjects && _isExpanded) {
+      _isExpanded = false;
+    }
   }
 
   void _toggle() {
+    if (!_hasProjects) return;
+
     setState(() {
       _isExpanded = !_isExpanded;
     });
@@ -111,43 +122,30 @@ class _CourseCardState extends State<CourseCard> {
                             color: AppTheme.textColor,
                           ),
                         ),
-                        const SizedBox(height: 3),
+                        const SizedBox(height: 1),
                         Text(
                           widget.progressText,
                           style: AppTheme.bodyS.copyWith(
                             color: AppTheme.grayColor100,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: LinearProgressIndicator(
-                            value: widget.progress.clamp(0.0, 1.0),
-                            minHeight: 4,
-                            backgroundColor: AppTheme.grayColor100,
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                              AppTheme.secondaryColor100,
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
-                  GestureDetector(
-                    onTap: _toggle,
-                    child: Icon(
-                      _isExpanded
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down,
+                  if (_hasProjects)
+                    GestureDetector(
+                      onTap: _toggle,
+                      child: Icon(
+                        _isExpanded
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                      ),
                     ),
-                  ),
                 ],
               ),
-
-              /// 🔥 EXPANSIÓN
               AnimatedCrossFade(
                 duration: const Duration(milliseconds: 220),
-                crossFadeState: _isExpanded
+                crossFadeState: _isExpanded && _hasProjects
                     ? CrossFadeState.showFirst
                     : CrossFadeState.showSecond,
                 firstChild: Column(
@@ -155,8 +153,6 @@ class _CourseCardState extends State<CourseCard> {
                     const SizedBox(height: 18),
                     const Divider(),
                     const SizedBox(height: 16),
-
-                    /// 🔥 LISTA DE CATEGORÍAS
                     ...widget.projects.map(
                       (project) => Padding(
                         padding: const EdgeInsets.only(bottom: 16),
@@ -195,8 +191,18 @@ class _CourseProjectRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.title),
-                Text(item.subtitle),
+                Text(
+                  item.title,
+                  style: AppTheme.bodyM.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: AppTheme.textColor,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  item.subtitle,
+                  style: AppTheme.bodyS.copyWith(color: AppTheme.grayColor100),
+                ),
               ],
             ),
           ),

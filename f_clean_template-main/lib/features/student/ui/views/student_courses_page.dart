@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:peer_sync/core/themes/app_theme.dart';
 import 'package:peer_sync/core/widgets/course_card.dart';
-import 'package:peer_sync/features/course/ui/viewmodels/course_controller.dart';
 import 'package:peer_sync/features/category/ui/viewmodels/category_controller.dart';
+import 'package:peer_sync/features/course/ui/viewmodels/course_controller.dart';
+import 'package:peer_sync/features/evaluation/ui/viewmodels/evaluation_controller.dart';
+import 'package:peer_sync/features/evaluation/ui/views/student_activities_page.dart';
 import 'student_category_page.dart';
 
 class StudentCoursesPage extends StatelessWidget {
@@ -17,6 +19,8 @@ class StudentCoursesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final CourseController controller = Get.find();
     final CategoryController categoryController = Get.find();
+    final EvaluationController evaluationController =
+        Get.find<EvaluationController>();
 
     return SingleChildScrollView(
       child: Padding(
@@ -48,12 +52,8 @@ class StudentCoursesPage extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 20),
-
-            /// 🔥 LISTA DINÁMICA
             Obx(() {
-              /// ⏳ LOADING
               if (controller.isLoading.value) {
                 return const Center(
                   child: Padding(
@@ -63,7 +63,6 @@ class StudentCoursesPage extends StatelessWidget {
                 );
               }
 
-              /// 📭 VACÍO
               if (controller.courses.isEmpty) {
                 return const Padding(
                   padding: EdgeInsets.only(top: 40),
@@ -74,40 +73,71 @@ class StudentCoursesPage extends StatelessWidget {
                 );
               }
 
-              /// ✅ LISTA
               return Column(
                 children: controller.courses.map((course) {
+                  final categories = categoryController.getCategoriesPreview(
+                    course.id,
+                  );
 
-                  /// 🔥 OBTENER CATEGORÍAS
-                  final categories =
-                      categoryController.getCategoriesPreview(course.id);
-
-                  /// 🔥 CARGAR SI NO EXISTEN
                   if (categories.isEmpty) {
-                    categoryController
-                        .loadCategoriesForCourseCardByStudent(course.id);
+                    categoryController.loadCategoriesForCourseCardByStudent(
+                      course.id,
+                    );
                   }
+
+                  for (final category in categories.take(3)) {
+                    if (!evaluationController.activeActivitiesCountByCategory
+                            .containsKey(category.id) &&
+                        !evaluationController.isLoadingActiveActivitiesCount(
+                          category.id,
+                        )) {
+                      evaluationController.loadActiveActivitiesCount(
+                        category.id,
+                      );
+                    }
+                  }
+
+                  final categoriesCount = categories.length;
+                  final progressText = categoriesCount == 0
+                      ? "Sin categorías"
+                      : categoriesCount == 1
+                      ? "1 categoría"
+                      : "$categoriesCount categorías";
+
+                  final projects = categories.take(3).map((c) {
+                    final activeActivitiesCount = evaluationController
+                        .getActiveActivitiesCount(c.id);
+
+                    final subtitle = activeActivitiesCount == 0
+                        ? "Sin actividades activas"
+                        : activeActivitiesCount == 1
+                        ? "1 actividad activa"
+                        : "$activeActivitiesCount actividades activas";
+
+                    return CourseProjectItem(
+                      title: c.name,
+                      subtitle: subtitle,
+                      onTap: (context, courseTitle, projectTitle) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => StudentActivitiesPage(
+                              categoryId: c.id,
+                              categoryName: c.name,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList();
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: CourseCard(
                       title: course.name,
-                      progressText: "0 de 0 actividades",
-                      progress: 0.0,
+                      progressText: progressText,
                       leadingIcon: Icons.school,
-
-                      /// 🔥 SOLO 3 CATEGORÍAS
-                      projects: categories
-                          .take(3)
-                          .map(
-                            (c) => CourseProjectItem(
-                              title: c.name,
-                              subtitle: "Grupo",
-                            ),
-                          )
-                          .toList(),
-
-                      /// 🔥 NAVEGACIÓN
+                      projects: projects,
                       onTap: (context) {
                         Navigator.push(
                           context,
@@ -124,7 +154,6 @@ class StudentCoursesPage extends StatelessWidget {
                 }).toList(),
               );
             }),
-
             const SizedBox(height: 30),
           ],
         ),

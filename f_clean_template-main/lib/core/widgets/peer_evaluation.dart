@@ -4,10 +4,10 @@ import 'package:peer_sync/core/themes/app_theme.dart';
 class EditablePeerEvaluationCard extends StatefulWidget {
   final String studentName;
   final String progressText;
-  final double progress;
   final bool initiallyExpanded;
   final IconData leadingIcon;
   final double width;
+  final bool isReadOnly;
 
   final double? initialPuntualidad;
   final double? initialContribucion;
@@ -20,10 +20,10 @@ class EditablePeerEvaluationCard extends StatefulWidget {
     super.key,
     required this.studentName,
     required this.progressText,
-    required this.progress,
     this.initiallyExpanded = false,
-    this.leadingIcon = Icons.south_rounded,
+    this.leadingIcon = Icons.person_sharp,
     this.width = 330,
+    this.isReadOnly = false,
     this.initialPuntualidad,
     this.initialContribucion,
     this.initialCompromiso,
@@ -99,6 +99,21 @@ class _EditablePeerEvaluationCardState
     _actitud = widget.initialActitud;
   }
 
+  @override
+  void didUpdateWidget(covariant EditablePeerEvaluationCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.initialPuntualidad != widget.initialPuntualidad ||
+        oldWidget.initialContribucion != widget.initialContribucion ||
+        oldWidget.initialCompromiso != widget.initialCompromiso ||
+        oldWidget.initialActitud != widget.initialActitud) {
+      _puntualidad = widget.initialPuntualidad;
+      _contribucion = widget.initialContribucion;
+      _compromiso = widget.initialCompromiso;
+      _actitud = widget.initialActitud;
+    }
+  }
+
   void _toggle() {
     setState(() {
       _isExpanded = !_isExpanded;
@@ -132,12 +147,48 @@ class _EditablePeerEvaluationCardState
   }
 
   String _descriptionFor(String criterion, double? score) {
-    if (score == null) return '';
-    return _criteriaDescriptions[criterion]?[score] ?? '';
+    if (score == null) return 'Sin descripción';
+    return _criteriaDescriptions[criterion]?[score] ?? 'Sin descripción';
+  }
+
+  ({Color background, Color text, Color border}) _tagColors(String value) {
+    final normalized = value.toLowerCase().trim();
+
+    if (normalized.contains('completado')) {
+      return (
+        background: const Color(0xFFF3EDFF),
+        text: const Color(0xFF7F56D9),
+        border: const Color(0xFFE4D7FF),
+      );
+    }
+
+    if (normalized.contains('pendiente')) {
+      return (
+        background: const Color(0xFFF3F4F6),
+        text: const Color(0xFF6B7280),
+        border: const Color(0xFFE5E7EB),
+      );
+    }
+
+    if (normalized.contains('cerrada')) {
+      return (
+        background: const Color(0xFFFDECEC),
+        text: const Color.fromARGB(255, 193, 95, 95),
+        border: const Color(0xFFF6D0D0),
+      );
+    }
+
+    return (
+      background: const Color(0xFFF3F4F6),
+      text: const Color(0xFF667085),
+      border: const Color(0xFFE5E7EB),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final tagStyle = _tagColors(widget.progressText);
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 220),
       curve: Curves.easeInOut,
@@ -187,22 +238,29 @@ class _EditablePeerEvaluationCardState
                         color: AppTheme.textColor,
                       ),
                     ),
-                    const SizedBox(height: 3),
-                    Text(
-                      widget.progressText,
-                      style: AppTheme.bodyS.copyWith(
-                        color: AppTheme.grayColor100,
-                      ),
-                    ),
                     const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: LinearProgressIndicator(
-                        value: widget.progress.clamp(0.0, 1.0),
-                        minHeight: 4,
-                        backgroundColor: AppTheme.grayColor100,
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          AppTheme.secondaryColor100,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: tagStyle.background,
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(color: tagStyle.border, width: 1),
+                        ),
+                        child: Text(
+                          widget.progressText,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTheme.bodyS.copyWith(
+                            color: tagStyle.text,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 11.5,
+                            height: 1,
+                          ),
                         ),
                       ),
                     ),
@@ -235,6 +293,7 @@ class _EditablePeerEvaluationCardState
                   description: _descriptionFor('Puntualidad', _puntualidad),
                   value: _puntualidad,
                   options: _scoreOptions,
+                  isReadOnly: widget.isReadOnly,
                   onChanged: (value) => _updateScore('Puntualidad', value),
                 ),
                 const SizedBox(height: 18),
@@ -243,6 +302,7 @@ class _EditablePeerEvaluationCardState
                   description: _descriptionFor('Contribución', _contribucion),
                   value: _contribucion,
                   options: _scoreOptions,
+                  isReadOnly: widget.isReadOnly,
                   onChanged: (value) => _updateScore('Contribución', value),
                 ),
                 const SizedBox(height: 18),
@@ -251,6 +311,7 @@ class _EditablePeerEvaluationCardState
                   description: _descriptionFor('Compromiso', _compromiso),
                   value: _compromiso,
                   options: _scoreOptions,
+                  isReadOnly: widget.isReadOnly,
                   onChanged: (value) => _updateScore('Compromiso', value),
                 ),
                 const SizedBox(height: 18),
@@ -259,6 +320,7 @@ class _EditablePeerEvaluationCardState
                   description: _descriptionFor('Actitud', _actitud),
                   value: _actitud,
                   options: _scoreOptions,
+                  isReadOnly: widget.isReadOnly,
                   onChanged: (value) => _updateScore('Actitud', value),
                 ),
               ],
@@ -276,6 +338,7 @@ class _EditableEvaluationRow extends StatelessWidget {
   final String description;
   final double? value;
   final List<double> options;
+  final bool isReadOnly;
   final ValueChanged<double> onChanged;
 
   const _EditableEvaluationRow({
@@ -283,78 +346,110 @@ class _EditableEvaluationRow extends StatelessWidget {
     required this.description,
     required this.value,
     required this.options,
+    required this.isReadOnly,
     required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
+    final textColor = isReadOnly
+        ? const Color(0xFF7B8494)
+        : const Color(0xFF9CA3AF);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTheme.bodyL.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.textColor,
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: AppTheme.bodyL.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.textColor,
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  description,
-                  style: AppTheme.bodyS.copyWith(
-                    color: const Color(0xFF718096),
-                    height: 1.35,
-                  ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                description,
+                style: AppTheme.bodyS.copyWith(
+                  color: const Color(0xFF718096),
+                  height: 1.35,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(width: 12),
-        Container(
-          width: 100,
-          height: 40,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF8F8FB),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppTheme.grayColor100, width: 1),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<double>(
-              value: value,
-              hint: Text(
-                '',
+        const SizedBox(width: 16),
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Container(
+            width: 96,
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8F8FB),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppTheme.grayColor100, width: 1),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<double>(
+                value: value,
+                isExpanded: true,
+                alignment: Alignment.centerLeft,
+                borderRadius: BorderRadius.circular(14),
+                icon: const Icon(
+                  Icons.keyboard_arrow_down,
+                  color: Color(0xFF9CA3AF),
+                ),
+                hint: Text(
+                  '',
+                  style: AppTheme.bodyM.copyWith(
+                    color: textColor,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 style: AppTheme.bodyM.copyWith(
-                  color: const Color(0xFF9CA3AF),
+                  color: textColor,
                   fontWeight: FontWeight.w500,
                 ),
+                selectedItemBuilder: (context) {
+                  return options.map((score) {
+                    return Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        score.toStringAsFixed(1),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTheme.bodyM.copyWith(
+                          color: textColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }).toList();
+                },
+                items: options.map((score) {
+                  return DropdownMenuItem<double>(
+                    value: score,
+                    child: Text(
+                      score.toStringAsFixed(1),
+                      style: AppTheme.bodyM.copyWith(
+                        color: const Color(0xFF4B5563),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  );
+                }).toList(),
+                onChanged: isReadOnly
+                    ? null
+                    : (newValue) {
+                        if (newValue != null) {
+                          onChanged(newValue);
+                        }
+                      },
               ),
-              icon: const Icon(
-                Icons.keyboard_arrow_down,
-                color: Color(0xFF9CA3AF),
-              ),
-              isExpanded: true,
-              borderRadius: BorderRadius.circular(14),
-              style: AppTheme.bodyM.copyWith(
-                color: const Color(0xFF9CA3AF),
-                fontWeight: FontWeight.w500,
-              ),
-              items: options.map((score) {
-                return DropdownMenuItem<double>(
-                  value: score,
-                  child: Text(score.toStringAsFixed(1)),
-                );
-              }).toList(),
-              onChanged: (newValue) {
-                if (newValue != null) onChanged(newValue);
-              },
             ),
           ),
         ),
