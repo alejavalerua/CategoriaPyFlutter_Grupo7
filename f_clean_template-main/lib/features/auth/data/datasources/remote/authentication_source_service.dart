@@ -166,4 +166,19 @@ class AuthenticationSourceService implements IAuthenticationSource {
       );
     }
   }
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {
+    final response = await httpClient.post(
+      Uri.parse('$baseUrl/forgot-password'), // Endpoint estándar de recuperación
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email}),
+    );
+
+    // Generalmente devuelve 200 si el correo existe y se envió el enlace
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Error al solicitar cambio de contraseña: ${response.body}');
+    }
+  }
+
 }

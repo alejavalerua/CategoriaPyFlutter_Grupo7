@@ -20,6 +20,8 @@ class AuthController extends GetxController {
   final signUpEmailController = TextEditingController();
   final signUpPasswordController = TextEditingController();
 
+  final resetEmailController = TextEditingController();
+
   /// 🔥 Estados
   final isLoading = false.obs;
   final passwordError = RxnString();
@@ -269,4 +271,43 @@ class AuthController extends GetxController {
 
     super.onClose();
   }
+
+Future<void> sendPasswordReset() async {
+    final email = resetEmailController.text.trim();
+    
+    if (email.isEmpty || !email.contains('@')) {
+      if (Get.context != null) {
+        ScaffoldMessenger.of(Get.context!).showSnackBar(
+          const SnackBar(content: Text('Por favor, ingresa un correo válido.'), backgroundColor: Colors.orange),
+        );
+      }
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+      
+      await repository.sendPasswordResetEmail(email);
+      
+      if (Get.context != null) {
+        ScaffoldMessenger.of(Get.context!).showSnackBar(
+          const SnackBar(content: Text('Se ha enviado un enlace a tu correo.'), backgroundColor: Colors.green),
+        );
+      }
+      
+      // Limpiamos y devolvemos al usuario al Login
+      resetEmailController.clear();
+      Get.back(); 
+
+    } catch (e) {
+      if (Get.context != null) {
+        ScaffoldMessenger.of(Get.context!).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.redAccent),
+        );
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
 }

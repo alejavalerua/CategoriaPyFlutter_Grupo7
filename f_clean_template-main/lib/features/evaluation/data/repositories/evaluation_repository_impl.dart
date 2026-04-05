@@ -1,4 +1,5 @@
 import 'package:peer_sync/features/evaluation/domain/models/activity.dart';
+import 'package:peer_sync/features/evaluation/domain/models/activity_report.dart';
 import 'package:peer_sync/features/evaluation/domain/models/criteria.dart';
 import 'package:peer_sync/features/evaluation/domain/models/peer.dart';
 
@@ -116,4 +117,11 @@ class EvaluationRepositoryImpl implements IEvaluationRepository {
     // Simplemente le pasa la pelota al Data Source
     return await _remoteSource.getMyAverageResults(activityId, myEmail);
   }
+
+  @override
+  Future<List<GroupReport>> getActivityReport(String activityId, String categoryId) async {
+    return await _remoteSource.getActivityReport(activityId, categoryId);
+}
+
+
 }

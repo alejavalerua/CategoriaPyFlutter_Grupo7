@@ -1,0 +1,126 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:peer_sync/core/themes/app_theme.dart';
+import '../viewmodels/teacher_report_controller.dart';
+
+class TeacherReportPage extends StatefulWidget {
+  final String activityId;
+  final String activityName;
+  final String categoryId;
+
+  const TeacherReportPage({
+    super.key,
+    required this.activityId,
+    required this.activityName,
+    required this.categoryId,
+  });
+
+  @override
+  State<TeacherReportPage> createState() => _TeacherReportPageState();
+}
+
+class _TeacherReportPageState extends State<TeacherReportPage> {
+  final TeacherReportController controller = Get.find<TeacherReportController>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.loadReport(widget.activityId, widget.categoryId);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F6FA),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF5F6FA),
+        elevation: 0,
+        iconTheme: const IconThemeData(color: AppTheme.primaryColor),
+        title: Text(
+          'Reporte: ${widget.activityName}',
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.primaryColor),
+        ),
+      ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (controller.groupReports.isEmpty) {
+          return const Center(child: Text("No hay grupos en esta categoría."));
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: controller.groupReports.length,
+          itemBuilder: (context, index) {
+            final group = controller.groupReports[index];
+
+            return Card(
+              margin: const EdgeInsets.only(bottom: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: ExpansionTile(
+                shape: const Border(), // Quita las líneas bordes feos al expandir
+                title: Text(
+                  group.groupName,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.primaryColor),
+                ),
+                subtitle: Text("${group.students.length} estudiantes"),
+                children: [
+                  const Divider(),
+                  ...group.students.map((student) {
+                    return ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      title: Text("${student.firstName} ${student.lastName}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(student.email, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                          const SizedBox(height: 4),
+                          // Etiqueta de Estado (Completó o le falta)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: student.isComplete ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              student.isComplete ? "Evaluaciones completas" : "Falta por evaluar",
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: student.isComplete ? Colors.green[700] : Colors.orange[800],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // El Círculo con la Nota
+                      trailing: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: AppTheme.secondaryColor.withOpacity(0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            student.finalGrade.toStringAsFixed(1),
+                            style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryColor, fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            );
+          },
+        );
+      }),
+    );
+  }
+}

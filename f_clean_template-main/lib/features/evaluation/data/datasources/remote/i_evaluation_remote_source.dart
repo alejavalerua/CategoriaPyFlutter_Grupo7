@@ -1,3 +1,5 @@
+import 'package:peer_sync/features/evaluation/domain/models/activity_report.dart';
+
 abstract class IEvaluationRemoteSource {
   Future<void> createActivity(
     String categoryId,
@@ -26,4 +28,6 @@ abstract class IEvaluationRemoteSource {
     String activityId,
     String myEmail,
   );
+  
+  Future<List<GroupReport>> getActivityReport(String activityId, String categoryId);
 }

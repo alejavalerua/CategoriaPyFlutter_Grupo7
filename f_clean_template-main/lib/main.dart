@@ -1,4 +1,5 @@
 import 'package:peer_sync/features/category/ui/bindings/category_binding.dart';
+import 'package:peer_sync/features/evaluation/ui/viewmodels/teacher_report_controller.dart';
 import 'package:peer_sync/features/groups/data/datasources/remote/groups_remote_source.dart';
 import 'package:peer_sync/features/groups/data/datasources/remote/i_groups_remote_source.dart';
 import 'package:peer_sync/features/groups/data/repositories/groups_repository_impl.dart';
@@ -50,6 +51,8 @@ void main() {
   Get.put<IEvaluationRepository>(EvaluationRepositoryImpl(Get.find()));
   Get.put<EvaluationController>(EvaluationController(Get.find()));
 
+  Get.put<TeacherReportController>(TeacherReportController(Get.find()));
+  
   runApp(const MyApp());
 }
 
