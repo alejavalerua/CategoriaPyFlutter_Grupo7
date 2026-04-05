@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class EvaluationCard extends StatelessWidget {
+  const EvaluationCard({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,6 +36,8 @@ class EvaluationCard extends StatelessWidget {
 }
 
 class HeaderSection extends StatelessWidget {
+  const HeaderSection({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -70,9 +74,11 @@ class HeaderSection extends StatelessWidget {
 }
 
 class ChartSection extends StatelessWidget {
+  const ChartSection({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 120,
       child: CustomPaint(painter: LineChartPainter()),
     );
@@ -102,6 +108,8 @@ class LineChartPainter extends CustomPainter {
 }
 
 class BottomSection extends StatelessWidget {
+  const BottomSection({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Row(

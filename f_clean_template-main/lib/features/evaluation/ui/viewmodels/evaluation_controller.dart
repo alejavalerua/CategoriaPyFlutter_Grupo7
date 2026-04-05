@@ -196,6 +196,26 @@ class EvaluationController extends GetxController {
     }
   }
 
+  Future<void> loadTeacherActivities(String categoryId) async {
+    try {
+      isLoadingTeacherActivities.value = true;
+
+      final result = await repository.getActivitiesByCategory(categoryId);
+
+      // El profesor ve todo, así que asignamos la lista completa
+      teacherActivities.assignAll(result);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'No se pudieron cargar las actividades: $e',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingTeacherActivities.value = false;
+    }
+  }
+
   Future<void> loadActiveActivitiesCount(String categoryId) async {
     if (loadingActiveCountByCategory[categoryId] == true) return;
 
