@@ -10,7 +10,9 @@ class EvaluationFormController extends GetxController {
   final AuthController authController = Get.find();
 
   final isLoading = false.obs;
-  final isSubmitting = false.obs;
+
+  // Estado de guardado por compañero
+  final submittingPeers = <String, bool>{}.obs;
 
   final peers = <Peer>[].obs;
   final criteriaList = <Criteria>[].obs;
@@ -27,6 +29,10 @@ class EvaluationFormController extends GetxController {
   // Saber quién soy yo
   String get myEmail => authController.user?.email ?? '';
 
+  bool isPeerSubmitting(String peerEmail) {
+    return submittingPeers[peerEmail] ?? false;
+  }
+
   Future<void> loadFormData(String activityId, String categoryId) async {
     try {
       isLoading.value = true;
@@ -34,13 +40,14 @@ class EvaluationFormController extends GetxController {
       final results = await Future.wait<dynamic>([
         repository.getPeers(categoryId, myEmail),
         repository.getCriteria(activityId),
-        repository.getMyEvaluations(activityId, myEmail), 
+        repository.getMyEvaluations(activityId, myEmail),
         repository.getMyAverageResults(activityId, myEmail),
       ]);
 
       peers.assignAll(results[0] as List<Peer>);
       criteriaList.assignAll(results[1] as List<Criteria>);
-      completedEvaluations.value = results[2] as Map<String, Map<String, double>>;
+      completedEvaluations.value =
+          results[2] as Map<String, Map<String, double>>;
 
       myAverageResults.value = results[3] as Map<String, double>;
     } catch (e) {
@@ -50,7 +57,7 @@ class EvaluationFormController extends GetxController {
     }
   }
 
-  // Se llama cada vez que el slider de EditablePeerEvaluationCard cambia
+  // Se llama cada vez que cambia un dropdown de la rúbrica
   void updateScoreForPeer(String peerEmail, Map<String, double?> newScores) {
     if (!pendingEvaluations.containsKey(peerEmail)) {
       pendingEvaluations[peerEmail] = {};
@@ -58,7 +65,6 @@ class EvaluationFormController extends GetxController {
 
     newScores.forEach((key, value) {
       if (value != null) {
-        // Mapeamos las llaves del widget de tu compañera a nombres legibles
         String criteriaName = '';
         if (key == 'puntualidad') criteriaName = 'Puntualidad';
         if (key == 'contribucion') criteriaName = 'Contribución';
@@ -70,6 +76,8 @@ class EvaluationFormController extends GetxController {
         }
       }
     });
+
+    pendingEvaluations.refresh();
   }
 
   // Enviar la evaluación de un compañero específico a ROBLE
@@ -86,13 +94,13 @@ class EvaluationFormController extends GetxController {
     }
 
     try {
-      isSubmitting.value = true;
+      submittingPeers[evaluatedEmail] = true;
+      submittingPeers.refresh();
 
-      // Transformamos los nombres legibles a los ID reales de la tabla Criteria (Ignorando tildes y mayúsculas)
+      // Transformamos los nombres legibles a los ID reales de la tabla Criteria
       Map<String, double> dbScores = {};
 
       scoresToSubmit.forEach((uiName, score) {
-        // Normalizamos los textos (minúsculas y sin tildes) para evitar errores tipográficos de BD
         final normalizedUiName = uiName.toLowerCase().replaceAll('ó', 'o');
 
         final matchedCriteria = criteriaList.firstWhereOrNull((c) {
@@ -109,7 +117,6 @@ class EvaluationFormController extends GetxController {
         }
       });
 
-      // SEGURO DE VIDA: Si no se logró hacer match con la base de datos, abortamos.
       if (dbScores.isEmpty) {
         _showError(
           'Error interno: Los criterios de la app no coinciden con los de la Base de Datos.',
@@ -128,9 +135,9 @@ class EvaluationFormController extends GetxController {
 
       _showSuccess('Evaluación guardada exitosamente.');
       pendingEvaluations.remove(evaluatedEmail);
+      pendingEvaluations.refresh();
 
-      // Recargamos el historial para que la UI se actualice y bloquee la tarjeta
-      final updatedEvaluations = await (repository as dynamic).getMyEvaluations(
+      final updatedEvaluations = await repository.getMyEvaluations(
         activityId,
         myEmail,
       );
@@ -138,11 +145,11 @@ class EvaluationFormController extends GetxController {
     } catch (e) {
       _showError(e.toString().replaceAll('Exception: ', ''));
     } finally {
-      isSubmitting.value = false;
+      submittingPeers[evaluatedEmail] = false;
+      submittingPeers.refresh();
     }
   }
 
-  // Helpers para mostrar mensajes nativos con ScaffoldMessenger
   void _showError(String message) {
     if (Get.context != null) {
       ScaffoldMessenger.of(Get.context!).showSnackBar(

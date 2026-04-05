@@ -8,7 +8,7 @@ class EvaluationController extends GetxController {
 
   final isLoading = false.obs;
 
-  // Variables Reactivas para el formulario
+  // Formulario de actividades
   final nameController = TextEditingController();
   final descriptionController = TextEditingController();
   final startDateController = TextEditingController();
@@ -16,7 +16,6 @@ class EvaluationController extends GetxController {
   final startTimeController = TextEditingController();
   final endTimeController = TextEditingController();
 
-  // Inicializamos las fechas por defecto (Hoy y Mañana)
   final startDate = DateTime.now().obs;
   final endDate = DateTime.now().add(const Duration(days: 7)).obs;
   final startTime = Rxn<TimeOfDay>();
@@ -24,21 +23,30 @@ class EvaluationController extends GetxController {
 
   final isVisible = true.obs;
 
+  // Actividades de una categoría específica
   final activities = <Activity>[].obs;
   final isLoadingActivities = false.obs;
   // Variables para la vista del profesor
   final teacherActivities = <Activity>[].obs;
   final isLoadingTeacherActivities = false.obs;
 
+  // Conteo de actividades activas por categoría
+  final activeActivitiesCountByCategory = <String, int>{}.obs;
+  final loadingActiveCountByCategory = <String, bool>{}.obs;
+
+  // Preview para Home
+  final homeActivities = <Activity>[].obs;
+  final isLoadingHomeActivities = false.obs;
+
   EvaluationController(this.repository);
 
-  // Método para guardar en Base de Datos
   Future<bool> saveActivity(String categoryId) async {
     try {
       if (nameController.text.trim().isEmpty) {
         _showMessage('El nombre de la actividad es obligatorio', Colors.orange);
         return false;
       }
+
       if (startTime.value == null || endTime.value == null) {
         _showMessage(
           'Debes seleccionar la hora de inicio y fin',
@@ -48,7 +56,8 @@ class EvaluationController extends GetxController {
       }
 
       isLoading.value = true;
-      DateTime finalStartDate = DateTime(
+
+      final finalStartDate = DateTime(
         startDate.value.year,
         startDate.value.month,
         startDate.value.day,
@@ -56,17 +65,20 @@ class EvaluationController extends GetxController {
         startTime.value!.minute,
       );
 
-      DateTime finalEndDate = DateTime(
+      final finalEndDate = DateTime(
         endDate.value.year,
         endDate.value.month,
         endDate.value.day,
         endTime.value!.hour,
         endTime.value!.minute,
       );
+
       if (finalStartDate.isAfter(finalEndDate) ||
           finalStartDate.isAtSameMomentAs(finalEndDate)) {
-        _showMessage('La fecha de inicio debe ser anterior a la de fin', Colors.redAccent);
-        isLoading.value = false;
+        _showMessage(
+          'La fecha de inicio debe ser anterior a la de fin',
+          Colors.redAccent,
+        );
         return false;
       }
 
@@ -79,13 +91,22 @@ class EvaluationController extends GetxController {
         visibility: isVisible.value,
       );
 
-      Get.back(); // Cerramos el modal/pantalla
+      Get.back();
       _showMessage('Actividad creada correctamente', Colors.green);
 
-      // Limpiamos el formulario para la próxima vez
       nameController.clear();
       descriptionController.clear();
-      isLoading.value = false;
+      startDateController.clear();
+      endDateController.clear();
+      startTimeController.clear();
+      endTimeController.clear();
+
+      startDate.value = DateTime.now();
+      endDate.value = DateTime.now().add(const Duration(days: 7));
+      startTime.value = null;
+      endTime.value = null;
+      isVisible.value = true;
+
       return true;
     } catch (e) {
       Get.snackbar(
@@ -101,15 +122,169 @@ class EvaluationController extends GetxController {
   }
 
   Future<void> pickStartDate(BuildContext context) async {
-    DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: startDate.value,
       firstDate: DateTime(2020),
       lastDate: DateTime(2300),
     );
+
     if (picked != null) {
       startDate.value = picked;
       startDateController.text = "${picked.day}/${picked.month}/${picked.year}";
+    }
+  }
+
+  Future<void> pickEndDate(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: endDate.value,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null) {
+      endDate.value = picked;
+      endDateController.text = "${picked.day}/${picked.month}/${picked.year}";
+    }
+  }
+
+  Future<void> pickStartTime(BuildContext context) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (picked != null) {
+      startTime.value = picked;
+      startTimeController.text = picked.format(context);
+    }
+  }
+
+  Future<void> pickEndTime(BuildContext context) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (picked != null) {
+      endTime.value = picked;
+      endTimeController.text = picked.format(context);
+    }
+  }
+
+  Future<void> loadActivities(String categoryId) async {
+    try {
+      isLoadingActivities.value = true;
+
+      final result = await repository.getActivitiesByCategory(categoryId);
+
+      final visibleActivities = result
+          .where((act) => act.visibility == true)
+          .toList();
+
+      activities.assignAll(visibleActivities);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'No se pudieron cargar las actividades: $e',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingActivities.value = false;
+    }
+  }
+
+  Future<void> loadActiveActivitiesCount(String categoryId) async {
+    if (loadingActiveCountByCategory[categoryId] == true) return;
+
+    try {
+      loadingActiveCountByCategory[categoryId] = true;
+      loadingActiveCountByCategory.refresh();
+
+      final result = await repository.getActivitiesByCategory(categoryId);
+
+      final visibleActivities = result
+          .where((act) => act.visibility == true)
+          .toList();
+
+      final now = DateTime.now();
+
+      final activeCount = visibleActivities.where((activity) {
+        final isExpired = now.isAfter(activity.endDate);
+        final isPending = now.isBefore(activity.startDate);
+        final isActive = !isExpired && !isPending;
+        return isActive;
+      }).length;
+
+      activeActivitiesCountByCategory[categoryId] = activeCount;
+      activeActivitiesCountByCategory.refresh();
+    } catch (e) {
+      activeActivitiesCountByCategory[categoryId] = 0;
+      activeActivitiesCountByCategory.refresh();
+    } finally {
+      loadingActiveCountByCategory[categoryId] = false;
+      loadingActiveCountByCategory.refresh();
+    }
+  }
+
+  int getActiveActivitiesCount(String categoryId) {
+    return activeActivitiesCountByCategory[categoryId] ?? 0;
+  }
+
+  bool isLoadingActiveActivitiesCount(String categoryId) {
+    return loadingActiveCountByCategory[categoryId] ?? false;
+  }
+
+  Future<void> loadHomeActivitiesPreview(List<String> categoryIds) async {
+    if (categoryIds.isEmpty) {
+      homeActivities.clear();
+      return;
+    }
+
+    try {
+      isLoadingHomeActivities.value = true;
+
+      final List<Activity> allActivities = [];
+
+      for (final categoryId in categoryIds) {
+        final result = await repository.getActivitiesByCategory(categoryId);
+        final visibleActivities = result
+            .where((act) => act.visibility == true)
+            .toList();
+        allActivities.addAll(visibleActivities);
+      }
+
+      final now = DateTime.now();
+
+      allActivities.sort((a, b) {
+        final aExpired = now.isAfter(a.endDate);
+        final bExpired = now.isAfter(b.endDate);
+
+        if (aExpired != bExpired) {
+          return aExpired ? 1 : -1;
+        }
+
+        if (!aExpired && !bExpired) {
+          final aDistance = a.endDate.difference(now).abs();
+          final bDistance = b.endDate.difference(now).abs();
+          return aDistance.compareTo(bDistance);
+        }
+
+        return b.endDate.compareTo(a.endDate);
+      });
+
+      homeActivities.assignAll(allActivities.take(3).toList());
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'No se pudieron cargar las actividades recientes: $e',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingHomeActivities.value = false;
     }
   }
 
@@ -124,78 +299,14 @@ class EvaluationController extends GetxController {
     }
   }
 
-  Future<void> pickEndDate(BuildContext context) async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      endDate.value = picked;
-      endDateController.text = "${picked.day}/${picked.month}/${picked.year}";
-    }
-  }
-
-  Future<void> pickStartTime(BuildContext context) async {
-    TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (picked != null) {
-      startTime.value = picked;
-      // format(context) convierte la hora a texto (ej. "14:30" o "2:30 PM") dependiendo de la configuración del celular
-      startTimeController.text = picked.format(context);
-    }
-  }
-
-  // 3. Selector de Hora de Fin
-  Future<void> pickEndTime(BuildContext context) async {
-    TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (picked != null) {
-      endTime.value = picked;
-      endTimeController.text = picked.format(context);
-    }
-  }
-
-Future<void> loadActivities(String categoryId) async {
-    try {
-      isLoadingActivities.value = true;
-      
-      final result = await repository.getActivitiesByCategory(categoryId);
-      
-      // Filtramos SOLO las que el profesor marcó como "visibles"
-      final visibleActivities = result.where((act) => act.visibility == true).toList();
-      
-      // Actualizamos la lista reactiva
-      activities.assignAll(visibleActivities);
-      
-    } catch (e) {
-      Get.snackbar('Error', 'No se pudieron cargar las actividades: $e', 
-        backgroundColor: Colors.redAccent, colorText: Colors.white);
-    } finally {
-      isLoadingActivities.value = false;
-    }
-  }
-
-// Carga TODAS las actividades de la categoría (sin filtrar por visibilidad)
-  Future<void> loadTeacherActivities(String categoryId) async {
-    try {
-      isLoadingTeacherActivities.value = true;
-      
-      final result = await repository.getActivitiesByCategory(categoryId);
-      
-      // El profesor ve todo, así que asignamos la lista completa
-      teacherActivities.assignAll(result);
-      
-    } catch (e) {
-      Get.snackbar('Error', 'No se pudieron cargar las actividades: $e', 
-        backgroundColor: Colors.redAccent, colorText: Colors.white);
-    } finally {
-      isLoadingTeacherActivities.value = false;
-    }
+  @override
+  void onClose() {
+    nameController.dispose();
+    descriptionController.dispose();
+    startDateController.dispose();
+    endDateController.dispose();
+    startTimeController.dispose();
+    endTimeController.dispose();
+    super.onClose();
   }
 }

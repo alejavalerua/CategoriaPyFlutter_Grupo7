@@ -26,10 +26,9 @@ class _HomePageState extends State<HomePageSt> {
 
   void openAddCourseModal() {
     final TextEditingController codeController = TextEditingController();
-    
+
     final CourseController courseController = Get.find();
-    
-    
+
     Get.dialog(
       barrierDismissible: false,
       Dialog(
