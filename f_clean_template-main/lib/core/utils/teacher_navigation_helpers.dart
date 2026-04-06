@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:peer_sync/features/category/ui/bindings/category_binding.dart';
+import 'package:peer_sync/features/course/ui/bindings/course_binding.dart';
 import 'package:peer_sync/features/course/ui/views/teacher_courses_page.dart';
 import 'package:peer_sync/features/teacher/ui/views/teacher_home_page.dart';
 import 'package:peer_sync/features/teacher/ui/views/teacher_profile_page.dart';
@@ -13,9 +15,21 @@ class TeacherNavigationHelpers {
     ensureTeacherDependencies();
 
     if (index == 0) {
-      Get.offAll(() => const TeacherCoursesPage());
+      Get.offAll(
+        () => const TeacherCoursesPage(),
+        binding: BindingsBuilder(() {
+          CourseBinding().dependencies();
+          CategoryBinding().dependencies();
+        }),
+      );
     } else if (index == 1) {
-      Get.offAll(() => const TeacherHomePage());
+      Get.offAll(
+        () => const TeacherHomePage(),
+        binding: BindingsBuilder(() {
+          CourseBinding().dependencies();
+          CategoryBinding().dependencies();
+        }),
+      );
     } else if (index == 2) {
       Get.offAll(() => const TeacherProfilePage());
     }

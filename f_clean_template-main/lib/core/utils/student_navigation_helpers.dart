@@ -30,67 +30,83 @@ class StudentNavigationHelpers {
     ensureStudentCourseDependencies();
 
     if (index == 0) {
-      Get.offAll(() => const StudentCoursesShell());
+      Get.offAll(
+        () => const StudentCoursesPage(),
+        binding: BindingsBuilder(() {
+          CourseBinding().dependencies();
+          CategoryBinding().dependencies();
+        }),
+      );
     } else if (index == 1) {
-      Get.offAll(() => const StudentHomeShell());
+      Get.offAll(
+        () => const StudentHomePage(),
+        binding: BindingsBuilder(() {
+          CourseBinding().dependencies();
+          CategoryBinding().dependencies();
+          // Si usas más controladores en el Home, agrégalos aquí
+        }),
+      );
     } else if (index == 2) {
-      Get.offAll(() => const StudentProfileShell());
+      Get.offAll(
+        () => const StudentProfilePage(),
+        // El perfil suele ser más ligero, pero si necesita bindings, se ponen igual
+      );
     }
   }
 }
 
-// Sacamos las clases Shell de los archivos individuales y las hacemos públicas
-class StudentCoursesShell extends StatelessWidget {
-  const StudentCoursesShell({super.key});
+// // Sacamos las clases Shell de los archivos individuales y las hacemos públicas
+// class StudentCoursesShell extends StatelessWidget {
+//   const StudentCoursesShell({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    StudentNavigationHelpers.ensureStudentCourseDependencies();
-    return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
-      body: const StudentCoursesPage(),
-      bottomNavigationBar: NavBar(
-        currentIndex: 0,
-        onTap: (index) {
-          if (index != 0) StudentNavigationHelpers.handleNavTap(index);
-        },
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     StudentNavigationHelpers.ensureStudentCourseDependencies();
+//     return Scaffold(
+//       backgroundColor: AppTheme.backgroundColor,
+//       body: const StudentCoursesPage(),
+//       bottomNavigationBar: NavBar(
+//         currentIndex: 0,
+//         onTap: (index) {
+//           if (index != 0) StudentNavigationHelpers.handleNavTap(index);
+//         },
+//       ),
+//     );
+//   }
+// }
 
-class StudentHomeShell extends StatelessWidget {
-  const StudentHomeShell({super.key});
+// class StudentHomeShell extends StatelessWidget {
+//   const StudentHomeShell({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
-      body: const StudentHomePage(),
-      bottomNavigationBar: NavBar(
-        currentIndex: 1,
-        onTap: (index) {
-          if (index != 1) StudentNavigationHelpers.handleNavTap(index);
-        },
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: AppTheme.backgroundColor,
+//       body: const StudentHomePage(),
+//       bottomNavigationBar: NavBar(
+//         currentIndex: 1,
+//         onTap: (index) {
+//           if (index != 1) StudentNavigationHelpers.handleNavTap(index);
+//         },
+//       ),
+//     );
+//   }
+// }
 
-class StudentProfileShell extends StatelessWidget {
-  const StudentProfileShell({super.key});
+// class StudentProfileShell extends StatelessWidget {
+//   const StudentProfileShell({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
-      body: const StudentProfilePage(),
-      bottomNavigationBar: NavBar(
-        currentIndex: 2,
-        onTap: (index) {
-          if (index != 2) StudentNavigationHelpers.handleNavTap(index);
-        },
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: AppTheme.backgroundColor,
+//       body: const StudentProfilePage(),
+//       bottomNavigationBar: NavBar(
+//         currentIndex: 2,
+//         onTap: (index) {
+//           if (index != 2) StudentNavigationHelpers.handleNavTap(index);
+//         },
+//       ),
+//     );
+//   }
+// }
