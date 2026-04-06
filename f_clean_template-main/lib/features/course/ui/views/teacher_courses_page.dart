@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:peer_sync/core/themes/app_theme.dart';
-import 'package:peer_sync/core/widgets/course_card.dart';
+import 'package:peer_sync/features/course/ui/widgets/course_card.dart';
 import 'package:peer_sync/features/course/ui/viewmodels/course_controller.dart';
 import 'package:peer_sync/features/category/ui/viewmodels/category_controller.dart';
-import 'teacher_category_page.dart';
+import '../../../category/ui/views/teacher_category_page.dart';
 
 class TeacherCoursesPage extends StatelessWidget {
   const TeacherCoursesPage({super.key});

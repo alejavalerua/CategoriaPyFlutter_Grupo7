@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:peer_sync/core/themes/app_theme.dart';
-import 'package:peer_sync/core/widgets/course_card.dart';
+import 'package:peer_sync/features/course/ui/widgets/course_card.dart';
 import 'package:peer_sync/features/category/ui/viewmodels/category_controller.dart';
 import 'package:peer_sync/features/course/ui/viewmodels/course_controller.dart';
 import 'package:peer_sync/features/evaluation/ui/viewmodels/evaluation_controller.dart';
 import 'package:peer_sync/features/evaluation/ui/views/student_activities_page.dart';
 import 'package:peer_sync/features/notifications/ui/viewmodels/notification_controller.dart';
 import 'package:peer_sync/features/notifications/ui/views/notifications_page.dart';
-import 'student_category_page.dart';
+import '../../../category/ui/views/student_category_page.dart';
 
 class StudentCoursesPage extends StatelessWidget {
   const StudentCoursesPage({super.key});

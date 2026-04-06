@@ -9,7 +9,7 @@ import 'package:peer_sync/features/evaluation/ui/viewmodels/evaluation_controlle
 import 'package:peer_sync/features/evaluation/ui/views/student_evaluation_page.dart';
 import 'package:peer_sync/features/notifications/ui/viewmodels/notification_controller.dart';
 import 'package:peer_sync/features/notifications/ui/views/notifications_page.dart';
-import 'package:peer_sync/features/student/ui/views/student_category_page.dart';
+import 'package:peer_sync/features/category/ui/views/student_category_page.dart';
 
 class StudentHomePage extends StatefulWidget {
   const StudentHomePage({super.key});

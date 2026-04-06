@@ -6,7 +6,7 @@ import 'package:peer_sync/features/category/ui/bindings/category_binding.dart';
 import 'package:peer_sync/features/category/ui/viewmodels/category_controller.dart';
 import 'package:peer_sync/features/course/ui/bindings/course_binding.dart';
 import 'package:peer_sync/features/course/ui/viewmodels/course_controller.dart';
-import 'package:peer_sync/features/student/ui/views/student_courses_page.dart';
+import 'package:peer_sync/features/course/ui/views/student_courses_page.dart';
 import 'package:peer_sync/features/student/ui/views/student_home_page.dart';
 import 'package:peer_sync/features/student/ui/views/student_profile_page.dart';
 

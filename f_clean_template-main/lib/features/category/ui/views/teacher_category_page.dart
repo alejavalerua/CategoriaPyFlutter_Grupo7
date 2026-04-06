@@ -4,15 +4,15 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:peer_sync/core/themes/app_theme.dart';
 import 'package:peer_sync/core/utils/loading_overlay.dart';
-import 'package:peer_sync/core/widgets/category_card.dart';
-import 'package:peer_sync/core/widgets/create_category_modal.dart';
+import 'package:peer_sync/features/category/ui/widgets/category_card.dart';
+import 'package:peer_sync/features/category/ui/widgets/create_category_modal.dart';
 import 'package:peer_sync/core/widgets/navbar.dart';
 import 'package:peer_sync/features/category/ui/viewmodels/category_controller.dart';
 import 'package:peer_sync/features/category/ui/views/category_detail_page.dart';
 import 'package:peer_sync/features/groups/ui/viewmodels/groups_controller.dart';
 
-import 'teacher_home_page.dart';
-import 'teacher_profile_page.dart';
+import '../../../teacher/ui/views/teacher_home_page.dart';
+import '../../../teacher/ui/views/teacher_profile_page.dart';
 
 // 🔥 IMPORTAR COURSE CONTROLLER
 import 'package:peer_sync/features/course/ui/viewmodels/course_controller.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+//TODO:este widget es muy especifico y no se esta usando
 class CoursesSection extends StatelessWidget {
   const CoursesSection({super.key});
 

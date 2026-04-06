@@ -3,7 +3,7 @@ import 'package:peer_sync/core/themes/app_theme.dart';
 import 'package:get/get.dart';
 import 'package:peer_sync/core/utils/loading_overlay.dart';
 import 'package:peer_sync/core/widgets/activity_card.dart';
-import 'package:peer_sync/core/widgets/create_activity_modal.dart';
+import 'package:peer_sync/features/category/ui/widgets/create_activity_modal.dart';
 import 'package:peer_sync/features/evaluation/ui/viewmodels/evaluation_controller.dart';
 import 'package:peer_sync/features/evaluation/ui/views/teacher_report_page.dart';
 

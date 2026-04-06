@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:peer_sync/core/themes/app_theme.dart';
 import 'package:peer_sync/core/utils/student_navigation_helpers.dart';
-import 'package:peer_sync/core/widgets/evaluation_card.dart';
+import 'package:peer_sync/features/evaluation/ui/widgets/evaluation_card.dart';
 import 'package:peer_sync/core/widgets/navbar.dart';
-import 'package:peer_sync/core/widgets/peer_evaluation.dart';
-import '../viewmodels/evaluation_form_controller.dart';
+import 'package:peer_sync/features/evaluation/ui/widgets/peer_evaluation.dart';
+import 'package:peer_sync/features/evaluation/ui/viewmodels/evaluation_form_controller.dart';
 
 class StudentEvaluationPage extends StatefulWidget {
   final String activityId;

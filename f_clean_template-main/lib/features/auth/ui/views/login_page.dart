@@ -4,9 +4,9 @@ import 'package:peer_sync/features/auth/ui/viewmodels/auth_controller.dart';
 import 'package:peer_sync/core/themes/app_theme.dart';
 import 'package:peer_sync/features/auth/ui/views/forgot_password_page.dart';
 
-import '../../../../core/widgets/auth_logo.dart';
-import '../../../../core/widgets/auth_input_container.dart';
-import '../../../../core/widgets//auth_text_field.dart';
+import '../widgets/auth_logo.dart';
+import '../widgets/auth_input_container.dart';
+import '../widgets/auth_text_field.dart';
 
 class LoginPage extends GetView<AuthController> {
   LoginPage({super.key}) {
