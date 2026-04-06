@@ -43,12 +43,13 @@ class CourseController extends GetxController {
   }
 
   /// 🔥 CREAR CURSO
-  Future<void> createCourse(String name) async {
+  Future<String?> createCourse(String name) async {
     try {
       isLoading.value = true;
+      final newCourseId = _generateId();
 
       final course = Course(
-        id: _generateId(),
+        id: newCourseId,
         name: name,
         code: _generateCode(),
       );
@@ -64,9 +65,12 @@ class CourseController extends GetxController {
         await loadCoursesByUser();
 
         _showSuccess("Curso creado correctamente");
+        return newCourseId;
       }
+      return null;
     } catch (e) {
       _showError(e);
+      return null;
     } finally {
       isLoading.value = false;
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:peer_sync/core/themes/app_theme.dart';
 import 'package:get/get.dart';
+import 'package:peer_sync/core/utils/loading_overlay.dart';
 import 'package:peer_sync/core/widgets/activity_card.dart';
 import 'package:peer_sync/core/widgets/create_activity_modal.dart';
 import 'package:peer_sync/features/evaluation/ui/viewmodels/evaluation_controller.dart';
@@ -50,8 +51,9 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
             onCancel: () => Get.back(),
             onCreate: () async {
               if (!controller.isLoading.value) {
-                // Aquí asumo que tu saveActivity devuelve un booleano como me mostraste
+                LoadingOverlay.show("Guardando actividad...");
                 bool success = await controller.saveActivity(widget.categoryId); 
+                LoadingOverlay.hide();
                 if (success) {
                   Get.back(); // Cerramos el modal
                   // ¡MAGIA! Recargamos la lista para que la nueva actividad aparezca de inmediato

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:peer_sync/core/themes/app_theme.dart';
+import 'package:peer_sync/core/utils/loading_overlay.dart';
 import 'package:peer_sync/core/widgets/category_card.dart';
 import 'package:peer_sync/core/widgets/create_category_modal.dart';
 import 'package:peer_sync/core/widgets/navbar.dart';
@@ -65,12 +66,13 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                 final csvString = utf8.decode(file.bytes!);
 
                 Get.back();
-
-                await groupsController.importCsvData(
-                  widget.courseId,
-                  csvString,
-                );
-                await categoryController.loadCategories(widget.courseId);
+                LoadingOverlay.show("Importando grupos y estudiantes...");
+                try {
+                  await groupsController.importCsvData(widget.courseId, csvString);
+                  await categoryController.loadCategories(widget.courseId);
+                } finally {
+                  LoadingOverlay.hide();
+                }
               } else {
                 Get.snackbar(
                   'Error',
