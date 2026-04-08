@@ -34,25 +34,28 @@ class TeacherProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 40),
-      
+
               // 2. Información del Usuario (Reactiva con Obx)
               Obx(() {
                 final user = authController.user;
                 final email = user?.email ?? 'usuario@ejemplo.com';
-                
+
                 // Extraemos la primera letra para el Avatar
-                final firstLetter = email.isNotEmpty ? email[0].toUpperCase() : 'U';
-                
+                final firstLetter = email.isNotEmpty
+                    ? email[0].toUpperCase()
+                    : 'U';
+
                 final name = user?.name ?? 'Estudiante';
-      
+
                 return Column(
                   children: [
                     // Avatar circular con la primera letra
                     CircleAvatar(
                       radius: 50,
-                      backgroundColor: AppTheme.primaryColor500, // Morado claro del tema
+                      backgroundColor:
+                          AppTheme.primaryColor500, // Morado claro del tema
                       child: Text(
                         firstLetter,
                         style: const TextStyle(
@@ -63,14 +66,14 @@ class TeacherProfilePage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Nombre extraído
                     Text(
                       name,
                       style: AppTheme.h3.copyWith(color: AppTheme.textColor),
                     ),
                     const SizedBox(height: 4),
-                    
+
                     // Correo completo
                     Text(
                       email,
@@ -79,9 +82,9 @@ class TeacherProfilePage extends StatelessWidget {
                   ],
                 );
               }),
-      
+
               const SizedBox(height: 40),
-      
+
               // 3. Tarjeta de Configuraciones con la lógica inyectada
               SettingsCard(
                 items: [
@@ -103,11 +106,12 @@ class TeacherProfilePage extends StatelessWidget {
                       // Diálogo de confirmación nativo de GetX
                       Get.defaultDialog(
                         title: "Cerrar Sesión",
+                        titleStyle: TextStyle(fontWeight: FontWeight.bold),
                         middleText: "¿Estás seguro de que quieres salir?",
                         textCancel: "Cancelar",
                         textConfirm: "Salir",
                         confirmTextColor: Colors.white,
-                        buttonColor: Colors.redAccent,
+                        buttonColor: AppTheme.primaryColor300,
                         cancelTextColor: AppTheme.primaryColor,
                         onConfirm: () {
                           // Llamamos al método que creamos antes

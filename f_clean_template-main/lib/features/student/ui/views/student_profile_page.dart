@@ -19,20 +19,29 @@ class StudentProfilePage extends StatelessWidget {
       backgroundColor: AppTheme.backgroundColor,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(top: 40, left: 30, right: 30), 
+          padding: const EdgeInsets.only(top: 40, left: 30, right: 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Text("Perfil", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF8F72C9))),
+                child: Text(
+                  "Perfil",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF8F72C9),
+                  ),
+                ),
               ),
               const SizedBox(height: 40),
 
               Obx(() {
                 final user = authController.user;
                 final email = user?.email ?? 'usuario@ejemplo.com';
-                final firstLetter = email.isNotEmpty ? email[0].toUpperCase() : 'U';
+                final firstLetter = email.isNotEmpty
+                    ? email[0].toUpperCase()
+                    : 'U';
                 final name = user?.name ?? 'Estudiante';
 
                 return Column(
@@ -40,12 +49,25 @@ class StudentProfilePage extends StatelessWidget {
                     CircleAvatar(
                       radius: 50,
                       backgroundColor: AppTheme.primaryColor500,
-                      child: Text(firstLetter, style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: AppTheme.primaryColor)),
+                      child: Text(
+                        firstLetter,
+                        style: const TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryColor,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 16),
-                    Text(name, style: AppTheme.h3.copyWith(color: AppTheme.textColor)),
+                    Text(
+                      name,
+                      style: AppTheme.h3.copyWith(color: AppTheme.textColor),
+                    ),
                     const SizedBox(height: 4),
-                    Text(email, style: AppTheme.bodyM.copyWith(color: Colors.grey)),
+                    Text(
+                      email,
+                      style: AppTheme.bodyM.copyWith(color: Colors.grey),
+                    ),
                   ],
                 );
               }),
@@ -54,18 +76,27 @@ class StudentProfilePage extends StatelessWidget {
 
               SettingsCard(
                 items: [
-                  SettingsCardItem(title: 'Notificaciones', onTap: () => Get.to(() => const NotificationsPage())),
-                  SettingsCardItem(title: 'Privacidad y seguridad', onTap: () => Get.snackbar('Privacidad', 'Próximamente...')),
+                  SettingsCardItem(
+                    title: 'Notificaciones',
+                    onTap: () => Get.to(() => const NotificationsPage()),
+                  ),
+                  SettingsCardItem(
+                    title: 'Privacidad y seguridad',
+                    onTap: () => Get.snackbar('Privacidad', 'Próximamente...'),
+                  ),
                   SettingsCardItem(
                     title: 'Cerrar sesión',
                     onTap: () {
                       Get.defaultDialog(
                         title: "Cerrar Sesión",
+                        titleStyle: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
                         middleText: "¿Estás seguro de que quieres salir?",
                         textCancel: "Cancelar",
                         textConfirm: "Salir",
                         confirmTextColor: Colors.white,
-                        buttonColor: Colors.redAccent,
+                        buttonColor: AppTheme.primaryColor300,
                         cancelTextColor: AppTheme.primaryColor,
                         onConfirm: () => authController.signOut(),
                       );

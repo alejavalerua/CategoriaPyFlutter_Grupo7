@@ -11,14 +11,15 @@ class ForgotPasswordPage extends StatelessWidget {
     final controller = Get.find<AuthController>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppTheme.backgroundColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: AppTheme.primaryColor),
       ),
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,7 +39,7 @@ class ForgotPasswordPage extends StatelessWidget {
               // Campo de Correo
               Text(
                 "Correo electrónico",
-                style: AppTheme.bodyM.copyWith(fontWeight: FontWeight.bold),
+                style: AppTheme.bodyM.copyWith(color: AppTheme.primaryColor200, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               TextField(
