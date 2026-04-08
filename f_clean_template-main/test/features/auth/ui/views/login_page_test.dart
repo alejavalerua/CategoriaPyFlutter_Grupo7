@@ -38,7 +38,6 @@ class FakeLoginAuthController extends GetxController implements AuthController {
 
   // Si tu AuthTextField permite conmutar el ojo de la contraseña,
   // añade también este método si el interface lo requiere:
-  @override
   void toggleObscurePassword() {
     obscurePassword.value = !obscurePassword.value;
   }
