@@ -4,17 +4,17 @@ import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
 
 // --- Ajusta estas rutas según tu proyecto ---
-import 'package:peer_sync/features/course/ui/views/student_courses_page.dart';
+import 'package:peer_sync/features/course/ui/views/teacher_courses_page.dart';
 import 'package:peer_sync/features/course/ui/viewmodels/course_controller.dart';
 import 'package:peer_sync/features/category/ui/viewmodels/category_controller.dart';
 import 'package:peer_sync/features/evaluation/ui/viewmodels/evaluation_controller.dart';
 import 'package:peer_sync/features/notifications/ui/viewmodels/notification_controller.dart';
 
-// (Descomenta tus modelos reales si lo necesitas y cambia 'dynamic')
+// (Descomenta tus modelos reales y cambia la palabra 'dynamic' si lo deseas)
 import 'package:peer_sync/features/course/domain/models/course.dart';
 import 'package:peer_sync/features/category/domain/models/category.dart';
 
-// 1. MOCKS DE TODOS LOS CONTROLADORES
+// 1. MOCKS DE LOS CONTROLADORES
 class MockCourseController extends GetxController with Mock implements CourseController {}
 class MockCategoryController extends GetxController with Mock implements CategoryController {}
 class MockEvaluationController extends GetxController with Mock implements EvaluationController {}
@@ -38,22 +38,21 @@ void main() {
     // 1. Course Controller
     when(() => mockCourseController.isLoading).thenReturn(false.obs);
     when(() => mockCourseController.courses).thenReturn(<Course>[].obs);
-    when(() => mockCourseController.loadCoursesByUser()).thenAnswer((_) async {});
+    // En la vista de profesor podría llamarse loadCourses o loadCoursesByUser, mockeamos por si acaso
+    when(() => mockCourseController.loadCourses()).thenAnswer((_) async {});
 
     // 2. Category Controller
     when(() => mockCategoryController.getCategoriesPreview(any())).thenReturn([]);
-    // 🔴 FIX: Enseñamos al mock qué responder para el subtítulo del progreso del curso
-    when(() => mockCategoryController.getCategoryCountText(any())).thenReturn('3 Categorías');
+    when(() => mockCategoryController.getCategoryCountText(any())).thenReturn('2 Categorías');
 
     // 3. Evaluation Controller
-    // 🔴 FIX: Enseñamos al mock qué responder para el subtítulo de la actividad
-    when(() => mockEvaluationController.getActiveActivitySubtitle(any())).thenReturn('1 Actividad activa');
+    when(() => mockEvaluationController.getActiveActivitySubtitle(any())).thenReturn('1 Actividad para calificar');
 
-    // 4. Notification Controller
-    final dummyUnread = 0.obs; 
+    // 4. Notification Controller (El truco del .obs para evitar el error de GetX)
+    final dummyUnread = 5.obs; 
     when(() => mockNotificationController.unreadCount).thenAnswer((_) => dummyUnread.value);
 
-    // Inyectamos a GetX
+    // Inyectamos todo en GetX
     Get.put<CourseController>(mockCourseController);
     Get.put<CategoryController>(mockCategoryController);
     Get.put<EvaluationController>(mockEvaluationController);
@@ -66,7 +65,7 @@ void main() {
 
   Widget createWidgetUnderTest() {
     return const GetMaterialApp(
-      home: StudentCoursesPage(),
+      home: TeacherCoursesPage(),
     );
   }
 
@@ -74,55 +73,55 @@ void main() {
   // CASOS DE PRUEBA
   // ==========================================
 
-  testWidgets('1. Debe mostrar estado de carga inicial', (WidgetTester tester) async {
+  testWidgets('1. Debe mostrar el estado de carga (CircularProgressIndicator) al iniciar', (WidgetTester tester) async {
+    // Simulamos carga
     when(() => mockCourseController.isLoading).thenReturn(true.obs);
 
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pump(); 
 
+    // Verificamos que aparece el loading
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 
-  testWidgets('2. Debe mostrar el estado vacío (Empty State) cuando no hay cursos', (WidgetTester tester) async {
+  testWidgets('2. Debe mostrar el Empty State cuando el profesor no tiene cursos', (WidgetTester tester) async {
+    // Simulamos carga terminada y lista vacía
     when(() => mockCourseController.isLoading).thenReturn(false.obs);
     when(() => mockCourseController.courses).thenReturn(<Course>[].obs);
 
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle();
 
-    // 🔴 FIX: Verificamos los textos exactos de tu nueva UI
-    expect(find.text('No estás inscrito en ningún curso'), findsOneWidget);
-    expect(find.text('Cursos'), findsWidgets); // Título en el header
+    // Verificamos los textos exactos del código del profesor
+    expect(find.text('No has creado ningún curso'), findsOneWidget);
+    expect(find.text('Cursos'), findsWidgets); // El título de la vista
   });
 
-  testWidgets('3. Debe renderizar la lista de cursos y sus proyectos internos', (WidgetTester tester) async {
-    // Curso falso
+  testWidgets('3. Debe renderizar la tarjeta del curso y su proyecto previo', (WidgetTester tester) async {
+    // Creamos los datos falsos
     final mockCourse = MockCourse();
-    when(() => mockCourse.id).thenReturn('course_123');
-    when(() => mockCourse.name).thenReturn('Flutter Avanzado');
+    when(() => mockCourse.id).thenReturn('course_prof_1');
+    when(() => mockCourse.name).thenReturn('Arquitectura de Software');
 
-    // Categoría falsa
     final mockCategory = MockCategory();
-    when(() => mockCategory.id).thenReturn('cat_1');
-    when(() => mockCategory.name).thenReturn('Proyecto Final');
+    when(() => mockCategory.id).thenReturn('cat_prof_1');
+    when(() => mockCategory.name).thenReturn('Entrega Final');
 
-    // Inyectamos el curso
+    // Inyectamos los datos falsos
     when(() => mockCourseController.isLoading).thenReturn(false.obs);
     when(() => mockCourseController.courses).thenReturn(<Course>[mockCourse].obs);
-    
-    // Inyectamos la categoría para cuando la UI consulte getCategoriesPreview
-    when(() => mockCategoryController.getCategoriesPreview('course_123')).thenReturn([mockCategory]);
+    when(() => mockCategoryController.getCategoriesPreview('course_prof_1')).thenReturn([mockCategory]);
 
-    // Ejecutamos
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle();
 
-    // Verificaciones
-    expect(find.text('Flutter Avanzado'), findsOneWidget); // Apareció el curso
-    expect(find.text('Proyecto Final'), findsWidgets);     // Apareció la categoría hija
-    expect(find.text('3 Categorías'), findsWidgets);       // Apareció el progressText
-    
-    // Botón flotante para agregar cursos
+    // Verificamos que el curso y la categoría se renderizan
+    expect(find.text('Arquitectura de Software'), findsOneWidget);
+    expect(find.text('Entrega Final'), findsWidgets);
+    expect(find.text('2 Categorías'), findsWidgets);
+    expect(find.text('1 Actividad para calificar'), findsWidgets);
+
+    // Verificamos que esté el botón flotante (+) para crear un curso nuevo
     expect(find.byType(FloatingActionButton), findsOneWidget);
   });
 }
