@@ -149,5 +149,9 @@ class AuthRepositoryImpl implements IAuthRepository {
   Future<void> sendPasswordResetEmail(String email) async {
     await _dataSource.sendPasswordResetEmail(email);
   }
-  
+
+  Future<String?> getCurrentUserEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('email');
+  }
 }

@@ -7,4 +7,5 @@ abstract class IAuthRepository {
   Future<void> clearUser();
   Future<T> safeRequest<T>(Future<T> Function() request);
   Future<void> sendPasswordResetEmail(String email);
+  Future<String?> getCurrentUserEmail();
 }

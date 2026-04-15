@@ -5,6 +5,7 @@ import '../../data/datasources/remote/category_remote_source_service.dart';
 import '../../data/datasources/remote/i_category_remote_source.dart';
 import '../viewmodels/category_controller.dart';
 import '../../../auth/ui/viewmodels/auth_controller.dart';
+import 'package:peer_sync/features/auth/domain/repositories/i_auth_repository.dart';
 
 class CategoryBinding extends Bindings {
   @override
@@ -14,12 +15,13 @@ class CategoryBinding extends Bindings {
       return CategoryRemoteSourceService(token: auth.user!.tokenA);
     });
 
-    Get.lazyPut<ICategoryRepository>(
-      () => CategoryRepositoryImpl(Get.find()),
-    );
+    Get.lazyPut<ICategoryRepository>(() {
+      return CategoryRepositoryImpl(
+        Get.find<ICategoryRemoteSource>(),
+        Get.find<IAuthRepository>(),
+      );
+    });
 
-    Get.lazyPut(
-      () => CategoryController(repository: Get.find()),
-    );
+    Get.lazyPut(() => CategoryController(repository: Get.find()));
   }
 }
